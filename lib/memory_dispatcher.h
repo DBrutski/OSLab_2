@@ -19,7 +19,7 @@ class memory_dispatcher {
 public:
     segment *first_segment = NULL;
     int page_size = 0;
-    VA allocated_buffer = NULL;
+    char *allocated_buffer = NULL;
 
     size_t allocated_pages_amount = 0;
     size_t reserved_pages_amount = 0;
@@ -30,6 +30,7 @@ public:
     memory_dispatcher(size_t page_amount, size_t page_size);
 
     ~memory_dispatcher() {
+        delete first_segment;
         delete[] allocated_buffer;
     }
 

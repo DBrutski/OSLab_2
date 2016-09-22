@@ -12,12 +12,12 @@
 class segment {
 public:
     struct segment *pNext = NULL;
-    unsigned int segment_size = 0;
-    unsigned int segment_offset = 0;
+    size_t segment_size = 0;
+    size_t segment_offset = 0;
     page *pages = NULL;
     size_t page_size;
 
-    segment(int segment_offset, size_t segment_size, size_t page_size);
+    segment(int segment_offset, size_t segment_size, size_t page_size, size_t pages_amount);
 
     int write_buffer_to_segment(size_t segment_offset, void *buffer_ptr, size_t buffer_size);
 
@@ -27,6 +27,11 @@ public:
     size_t page_offset_bits;
 
     int read_buffer_from_segment(size_t segment_offset, void *buffer_ptr, size_t buffer_size);
+
+    size_t pages_amount;
+    ~segment(){
+        delete pNext;
+    }
 };
 
 

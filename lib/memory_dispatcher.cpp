@@ -45,8 +45,9 @@ segment memory_dispatcher::create_new_segment(size_t segment_size) {
         return *ptr;
     }
 
+    segment_offset += existed_segment->pages_amount * existed_segment->page_size;
     while (existed_segment->pNext != NULL) {
-        segment_offset += existed_segment->segment_size;
+        segment_offset += existed_segment->pages_amount * existed_segment->page_size;
         existed_segment = existed_segment->pNext;
     }
     segment *ptr = create_segment(segment_offset, segment_size);
@@ -55,8 +56,8 @@ segment memory_dispatcher::create_new_segment(size_t segment_size) {
 }
 
 segment *memory_dispatcher::create_segment(size_t segment_offset, size_t segment_size) {
-    segment *ptr = new segment(segment_offset, segment_size, this->page_size);
     size_t required_pages = this->get_required_pages_amount(segment_size);
+    segment *ptr = new segment(segment_offset, segment_size, this->page_size, required_pages);
     page *segment_pages = allocate_pages(segment_offset, required_pages);
     ptr->pages = segment_pages;
     return ptr;
@@ -94,7 +95,7 @@ int memory_dispatcher::write(VA ptr, void *buffer_ptr, size_t buffer_size) {
         return err;
     }
 
-    if (!segment_offset + buffer_size >= segment_ptr->segment_size) {
+    if (segment_offset + buffer_size > segment_ptr->segment_size) {
         return OUT_OF_RANGE_ERROR;
     }
     err = segment_ptr->write_buffer_to_segment(segment_offset, buffer_ptr, buffer_size);
@@ -102,7 +103,7 @@ int memory_dispatcher::write(VA ptr, void *buffer_ptr, size_t buffer_size) {
 }
 
 int memory_dispatcher::get_segment(segment **segment_ptr, size_t *segment_offset, VA memory_offset) {
-    size_t offset = memory_offset - this->allocated_buffer;
+    size_t offset = (size_t) memory_offset;
     if (offset < 0 || offset >= this->allocated_pages_amount * this->page_size) {
         return OUT_OF_RANGE_ERROR;
     }
@@ -135,7 +136,7 @@ int memory_dispatcher::read(VA ptr, void *buffer_ptr, size_t buffer_size) {
         return err;
     }
 
-    if (!segment_offset + buffer_size >= segment_ptr->segment_size) {
+    if (segment_offset + buffer_size > segment_ptr->segment_size) {
         return OUT_OF_RANGE_ERROR;
     }
 

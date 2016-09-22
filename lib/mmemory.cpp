@@ -21,7 +21,7 @@ int _write(VA ptr, void *buffer_ptr, size_t buffer_size) {
 };
 
 bool isPowOfTwo(size_t number) {
-    return !number & (number - 1);
+    return !(number & number - 1);
 }
 
 int _init(int n, size_t szPage) {
@@ -31,7 +31,7 @@ int _init(int n, size_t szPage) {
     if (!isPowOfTwo(szPage)) {
         return INCORRECT_PARAMETERS_ERROR;
     }
-
-    dispatcher->~memory_dispatcher();
     dispatcher = new memory_dispatcher(n, szPage);
+    if (dispatcher == NULL) { return UNKNOWN_ERROR; }
+    return 0;
 };

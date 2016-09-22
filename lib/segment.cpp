@@ -6,12 +6,13 @@
 #include <cmath>
 #include "segment.h"
 
-segment::segment(int segment_offset, size_t segment_size, size_t page_size) {
+segment::segment(int segment_offset, size_t segment_size, size_t page_size, size_t pages_amount) {
     this->segment_offset = segment_offset;
     this->pNext = NULL;
     this->segment_size = segment_size;
     this->page_size = page_size;
     init_pages_offset(page_size);
+    this->pages_amount = pages_amount;
 }
 
 
