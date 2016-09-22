@@ -10,7 +10,7 @@
 class page {
 public:
     bool in_memory = true;
-    VA buffer_pointer = NULL;
+    char *buffer_pointer = NULL;
     size_t page_size = 0;
 
     void write(size_t offset, char *buffer, size_t buffer_size);

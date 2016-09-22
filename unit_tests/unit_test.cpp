@@ -173,8 +173,6 @@ BOOST_AUTO_TEST_CASE(unit_test_malloc_many_pages) {
 BOOST_AUTO_TEST_CASE(unit_test_create_segments_and_remove_some) {
     memory_dispatcher dispatcher = init_manager(5, 8);
 
-    VA *blocks =
-
     VA block;
     int err = dispatcher.malloc(&block, 30);
     BOOST_CHECK_EQUAL(0, err);
