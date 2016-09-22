@@ -1,5 +1,11 @@
 #include <cstddef>
 
+const int SUCCESSFUL_CODE = 0;
+const int INCORRECT_PARAMETERS_ERROR = -1;
+const int NOT_ENOUGH_MEMORY_ERROR = -2;
+const int OUT_OF_RANGE_ERROR = -2;
+const int UNKNOWN_ERROR = 1;
+
 /************************************************************************
 		Лабораторная работа №2
 
