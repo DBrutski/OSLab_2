@@ -11,7 +11,7 @@
 
 class segment {
 public:
-    struct segment *pNext = NULL;
+    segment() {};
     size_t segment_size = 0;
     size_t segment_offset = 0;
     page *pages = NULL;
@@ -29,9 +29,7 @@ public:
     int read_buffer_from_segment(size_t segment_offset, void *buffer_ptr, size_t buffer_size);
 
     size_t pages_amount;
-    ~segment(){
-        delete pNext;
-    }
+
 };
 
 

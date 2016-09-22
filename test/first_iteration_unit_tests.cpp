@@ -49,7 +49,7 @@ BOOST_AUTO_TEST_CASE(write_char_block) {
     BOOST_CHECK_EQUAL(0, err);
 
     char *writen_block = "segment size = 18";
-    size_t buffer_size = 18;
+    size_t buffer_size = 8;
     err = _write(block, writen_block, buffer_size);
     BOOST_CHECK_EQUAL(0, err);
 
@@ -58,8 +58,9 @@ BOOST_AUTO_TEST_CASE(write_char_block) {
     err = _read(block, readen_block, buffer_size);
     BOOST_CHECK_EQUAL(0, err);
 
-
     BOOST_CHECK_EQUAL_COLLECTIONS(writen_block, writen_block + buffer_size, readen_block, readen_block + buffer_size);
+
+    delete[] readen_block;
     dispatcher->~memory_dispatcher();
 }
 
@@ -104,7 +105,7 @@ BOOST_AUTO_TEST_CASE(write_char_block_not_in_block_beginning) {
     init_manager(5, 8);
 
     VA block;
-    int err = _malloc(&block, 20);
+    int err = _malloc(&block, 30);
     BOOST_CHECK_EQUAL(0, err);
 
 
@@ -127,7 +128,7 @@ BOOST_AUTO_TEST_CASE(write_int_block) {
     init_manager(5, 8);
 
     VA block;
-    int err = _malloc(&block, 20);
+    int err = _malloc(&block, 30);
     BOOST_CHECK_EQUAL(0, err);
 
 

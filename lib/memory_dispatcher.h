@@ -7,7 +7,9 @@
 #include <cstddef>
 #include "mmemory.h"
 #include "segment.h"
+#include <map>
 
+using namespace std;
 
 const int SUCCESSFUL_CODE = 0;
 const int INCORRECT_PARAMETERS_ERROR = -1;
@@ -17,7 +19,9 @@ const int UNKNOWN_ERROR = 1;
 
 class memory_dispatcher {
 public:
-    segment *first_segment = NULL;
+
+
+    map<size_t, segment> segments;
     int page_size = 0;
     char *allocated_buffer = NULL;
 
@@ -30,7 +34,6 @@ public:
     memory_dispatcher(size_t page_amount, size_t page_size);
 
     ~memory_dispatcher() {
-        delete first_segment;
         delete[] allocated_buffer;
     }
 
@@ -55,7 +58,7 @@ public:
 
     int write(VA ptr, void *buffer_ptr, size_t buffer_size);
 
-    int get_segment(segment **segment_ptr, size_t *segment_offset, VA memory_offset);
+    int get_segment(segment &segment_ptr, size_t &segment_offset, VA memory_offset);
 
     int read(VA ptr, void *buffer_ptr, size_t buffer_size);
 

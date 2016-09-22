@@ -8,7 +8,6 @@
 
 segment::segment(int segment_offset, size_t segment_size, size_t page_size, size_t pages_amount) {
     this->segment_offset = segment_offset;
-    this->pNext = NULL;
     this->segment_size = segment_size;
     this->page_size = page_size;
     init_pages_offset(page_size);
@@ -48,7 +47,10 @@ int segment::read_buffer_from_segment(size_t segment_offset, void *buffer_ptr, s
     size_t buffer_offset = 0;
     while (buffer_offset < buffer_size) {
 
-        page.read(page_offset, (char *) buffer_ptr + buffer_offset, this->page_size - page_offset);
+        size_t readen_page_size = buffer_size - buffer_offset < page_size ?
+        buffer_size - buffer_offset : page_size;
+
+        page.read(page_offset, (char *) buffer_ptr + buffer_offset, readen_page_size);
         buffer_offset += (this->page_size - page_offset);
         page_offset = 0;
         page = this->pages[++page_number];

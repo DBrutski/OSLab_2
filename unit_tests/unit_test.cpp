@@ -23,11 +23,11 @@ BOOST_AUTO_TEST_CASE(unit_test_malloc_block) {
     size_t pages_amount = dispatcher.reserved_pages_amount;
     BOOST_CHECK_EQUAL(1, pages_amount);
 
-    segment *expected_segment = dispatcher.first_segment;
-    BOOST_CHECK(expected_segment != NULL);
-    BOOST_CHECK_EQUAL(0, expected_segment->segment_offset);
-    BOOST_CHECK_EQUAL(8, expected_segment->segment_size);
-    page *pages = expected_segment->pages;
+    segment expected_segment = (*dispatcher.segments.begin()).second;
+    BOOST_CHECK_EQUAL(1, dispatcher.segments.size());
+    BOOST_CHECK_EQUAL(0, expected_segment.segment_offset);
+    BOOST_CHECK_EQUAL(8, expected_segment.segment_size);
+    page *pages = expected_segment.pages;
     BOOST_CHECK(pages != NULL);
     BOOST_CHECK(pages->buffer_pointer >= dispatcher.allocated_buffer);
     BOOST_CHECK(pages->buffer_pointer <
@@ -71,7 +71,7 @@ BOOST_AUTO_TEST_CASE(unit_test_write_buffer_to_one_page) {
     BOOST_CHECK_EQUAL_COLLECTIONS(buffer, buffer + buffer_size,
                                   allocated_buffer, allocated_buffer + buffer_size);
 
-    page allocated_page = dispatcher.first_segment->pages[0];
+    page allocated_page = (*dispatcher.segments.begin()).second.pages[0];
     BOOST_CHECK_EQUAL_COLLECTIONS(buffer, buffer + buffer_size,
                                   allocated_page.buffer_pointer, allocated_page.buffer_pointer + buffer_size);
 }
@@ -94,7 +94,7 @@ BOOST_AUTO_TEST_CASE(unit_test_write_buffer_to_page_not_in_begin) {
     BOOST_CHECK_EQUAL_COLLECTIONS(buffer, buffer + buffer_size,
                                   allocated_buffer + 5, allocated_buffer + 5 + buffer_size);
 
-    page allocated_page = dispatcher.first_segment->pages[0];
+    page allocated_page = (*dispatcher.segments.begin()).second.pages[0];
     BOOST_CHECK_EQUAL_COLLECTIONS(buffer, buffer + buffer_size,
                                   allocated_page.buffer_pointer + 5, allocated_page.buffer_pointer + 5 + buffer_size);
 }
@@ -158,4 +158,26 @@ BOOST_AUTO_TEST_CASE(unit_test_read_buffer_from_two_page_not_in_begin) {
     BOOST_CHECK_EQUAL(0, err);
 
     BOOST_CHECK_EQUAL_COLLECTIONS(buffer, buffer + buffer_size, readen_buffer, readen_buffer + buffer_size);
+}
+
+BOOST_AUTO_TEST_CASE(unit_test_malloc_many_pages) {
+    memory_dispatcher dispatcher = init_manager(5, 8);
+
+    VA block;
+    int err = dispatcher.malloc(&block, 30);
+    BOOST_CHECK_EQUAL(0, err);
+
+    BOOST_CHECK_EQUAL(30, (*dispatcher.segments.begin()).second.segment_size);
+}
+
+BOOST_AUTO_TEST_CASE(unit_test_create_segments_and_remove_some) {
+    memory_dispatcher dispatcher = init_manager(5, 8);
+
+    VA *blocks =
+
+    VA block;
+    int err = dispatcher.malloc(&block, 30);
+    BOOST_CHECK_EQUAL(0, err);
+
+    BOOST_CHECK_EQUAL(30, (*dispatcher.segments.begin()).second.segment_size);
 }

@@ -9,5 +9,6 @@ set(CMAKE_CXX_FLAGS "-Wwrite-strings")
 add_subdirectory(test ./test)
 add_subdirectory(lib ./lib)
 add_subdirectory(unit_tests)
+add_subdirectory(stress_tests)
 
 
