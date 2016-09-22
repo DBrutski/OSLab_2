@@ -18,7 +18,9 @@ BOOST_AUTO_TEST_CASE(unit_test_malloc_block) {
 
     VA *block;
     _malloc(block, 8);
-    BOOST_CHECK_EQUAL(1, dispatcher.reserved_pages_amount);
+    size_t pages_amount = dispatcher.reserved_pages_amount;
+    BOOST_CHECK_EQUAL(1, pages_amount);
+
     segment *expected_segment = dispatcher.first_segment;
     BOOST_CHECK(expected_segment != NULL);
     BOOST_CHECK_EQUAL(0, expected_segment->offsetBlock);

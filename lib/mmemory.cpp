@@ -82,7 +82,7 @@ segment *get_first_free_segment(size_t size);
 size_t get_required_pages_amount(size_t block_size);
 
 segment *construct_segment(size_t offset, size_t size) {
-    segment *existed_segment;
+    segment *existed_segment = new segment();
     existed_segment->offsetBlock = offset;
     existed_segment->pNext = NULL;
     size_t required_pages_amount = get_required_pages_amount(size);
