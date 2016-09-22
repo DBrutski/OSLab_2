@@ -50,8 +50,8 @@ int _free (VA ptr);
  	@brief	Чтение информации из блока памяти
 	
 	@param	[in] ptr		адресс блока
-	@param	[in] pBuffer	адресс буфера куда копируется инфомация
-	@param	[in] szBuffer	размер буфера
+	@param	[in] buffer_ptr	адресс буфера куда копируется инфомация
+	@param	[in] buffer_size	размер буфера
 	
 	@return	код ошибки
 	@retval	0	успешное выполнение
@@ -59,7 +59,7 @@ int _free (VA ptr);
 	@retval	-2	доступ за пределы блока
 	@retval	1	неизвестная ошибка
 **/
-int _read (VA ptr, void* pBuffer, size_t szBuffer);
+int _read (VA ptr, void* buffer_ptr, size_t buffer_size);
 
 
 
@@ -68,8 +68,8 @@ int _read (VA ptr, void* pBuffer, size_t szBuffer);
  	@brief	Запись информации в блок памяти
 	
 	@param	[in] ptr		адресс блока
-	@param	[in] pBuffer	адресс буфера куда копируется инфомация
-	@param	[in] szBuffer	размер буфера
+	@param	[in] buffer_ptr	адресс буфера куда копируется инфомация
+	@param	[in] buffer_size	размер буфера
 	
 	@return	код ошибки
 	@retval	0	успешное выполнение
@@ -77,7 +77,7 @@ int _read (VA ptr, void* pBuffer, size_t szBuffer);
 	@retval	-2	доступ за пределы блока
 	@retval	1	неизвестная ошибка
  **/
-int _write (VA ptr, void* pBuffer, size_t szBuffer);
+int _write (VA ptr, void* buffer_ptr, size_t buffer_size);
 
 
 
