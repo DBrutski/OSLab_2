@@ -13,6 +13,8 @@ public:
 
     bool in_memory;
 
+    page() {};
+
     page(size_t offset, bool in_memory);
 };
 

@@ -5,20 +5,22 @@
 #include <cmath>
 #include "memory_pager.h"
 
-memory_pager::memory_pager(size_t page_size, size_t inmemory_pages_amount, size_t swap_pages_amount) {
-    size_t buffer_size = inmemory_pages_amount * page_size;
+memory_pager::memory_pager(size_t page_size, size_t in_memory_pages_amount, size_t swap_pages_amount) {
+    size_t buffer_size = in_memory_pages_amount * page_size;
     buffer = new char[buffer_size];
-
-    allocated_pages_amount = inmemory_pages_amount + swap_pages_amount;
-    free_inmemory_pages = create_inmemory_pages_pull(inmemory_pages_amount, page_size);
+    this->page_size = page_size;
+    allocated_pages_amount = in_memory_pages_amount + swap_pages_amount;
+    pages_virtual_space = new page[allocated_pages_amount];
+    free_inmemory_pages = create_inmemory_pages_pull(in_memory_pages_amount, page_size);
 }
 
 queue<page> memory_pager::create_inmemory_pages_pull(size_t pages_amount, size_t page_size) {
     queue<page> pull;
     for (int i = 0; i < pages_amount; i++) {
         page new_page(i * page_size, true);
+        pull.push(new_page);
     }
-    return queue<page>();
+    return pull;
 }
 
 segment memory_pager::malloc(size_t virtual_offset, size_t requred_size) {
@@ -30,7 +32,7 @@ segment memory_pager::malloc(size_t virtual_offset, size_t requred_size) {
         free_inmemory_pages.pop();
     }
 
-    return segment(requred_size, virtual_offset, virtual_offset + requred_size);
+    return segment(requred_size, virtual_offset, virtual_offset + required_pages_amount * page_size);
 }
 
 size_t memory_pager::get_required_pages_amount(int required_size) {
@@ -76,9 +78,9 @@ void memory_pager::write(page page, size_t page_offset, char *buffer, size_t buf
 
 }
 
-bool memory_pager::check_enough_memory(size_t required_size) {
+bool memory_pager::is_memory_enought(size_t required_size) {
     size_t required_pages_amount = get_required_pages_amount(required_size);
-    return required_pages_amount >= free_inmemory_pages.size() + free_swap_pages.size();
+    return required_pages_amount <= free_inmemory_pages.size() + free_swap_pages.size();
 }
 
 bool memory_pager::is_offset_in_range(size_t offset) {

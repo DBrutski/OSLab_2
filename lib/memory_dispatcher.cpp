@@ -17,7 +17,7 @@ int memory_dispatcher::malloc(VA *ptr, size_t segment_size) {
 }
 
 bool memory_dispatcher::check_enough_memory(size_t required_size) {
-    return pager->check_enough_memory(required_size);
+    return pager->is_memory_enought(required_size);
 }
 
 int memory_dispatcher::allocate_memory(VA *ptr, size_t segment_size) {

@@ -26,7 +26,7 @@ public:
     queue<page> free_swap_pages;
     size_t page_size;
 
-    memory_pager(size_t page_size, size_t inmemory_pages_amount, size_t swap_pages_amount);
+    memory_pager(size_t page_size, size_t in_memory_pages_amount, size_t swap_pages_amount);
 
     queue<page> create_inmemory_pages_pull(size_t pages_amount, size_t page_size);
 
@@ -49,7 +49,7 @@ public:
 
     void write(page page, size_t page_offset, char *buffer, size_t buffer_size);
 
-    bool check_enough_memory(size_t required_size);
+    bool is_memory_enought(size_t required_size);
 
     bool is_offset_in_range(size_t offset);
 };
