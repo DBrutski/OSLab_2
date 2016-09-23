@@ -27,14 +27,6 @@ struct map {
     size_t length;
     struct list_node *first_node;
     struct list_node *last_node;
-
-    struct segment find_less_or_equal(size_t key);
-
-    void insert(size_t key, struct segment data);
-
-    struct segment last();
-
-    size_t size();
 };
 
 struct map create_map() {
@@ -43,5 +35,13 @@ struct map create_map() {
     new_map.last_node = NULL;
     return new_map;
 }
+
+struct segment * find_less_or_equal(struct map *self, size_t key);
+
+void map_insert(struct map *self, size_t key, struct segment data);
+
+struct segment map_last(struct map *self);
+
+size_t map_size(struct map *self);
 
 #endif //NEIRONS_NETWORK_MAP_H

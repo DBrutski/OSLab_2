@@ -10,9 +10,9 @@
 struct page {
     size_t offset;
 
-    boolean in_memory;
+    bool in_memory;
 
 };
 
-struct page create_page(size_t offset, boolean in_memory);
+struct page create_page(size_t offset, bool in_memory);
 #endif //NEIRONS_NETWORK_PAGE_H

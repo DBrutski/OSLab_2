@@ -12,23 +12,27 @@ struct queue create_queue() {
     return out_queue;
 }
 
-void queue::push(struct page new_page) {
+void queue_push(struct queue *self, struct page new_page) {
     struct queue_node node = create_queue_node();
     node.data = new_page;
-    if (back == NULL) {
-        back = &node;
-        head = &node;
+    if (self->back == NULL) {
+        self->back = &node;
+        self->head = &node;
     } else {
-        node.next_p = back;
-        back = &node;
+        node.next_p = self->back;
+        self->back = &node;
     }
-    size++;
+    self->size++;
 }
 
-struct page queue::pop() {
-    if (head == NULL) {
+struct page * queue_pop(struct queue *self) {
+    if (self->head == NULL) {
         return NULL;
     }
-    head = head->previos_p;
-    return head->next_p->data;
+    self->head = self->head->previos_p;
+    return &self->head->next_p->data;
+}
+
+size_t queue_size(struct queue *self) {
+    return self->size;
 }

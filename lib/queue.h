@@ -25,12 +25,14 @@ struct queue_node create_queue_node(){
 struct queue {
     struct queue_node *head, *back;
     size_t size;
-
-    void push(struct page new_page);
-
-    struct page pop();
 };
 
 struct queue create_queue();
+
+void queue_push(struct queue *self, struct page new_page);
+
+struct page * queue_pop(struct queue *self);
+
+size_t queue_size(struct queue *self);
 
 #endif //NEIRONS_NETWORK_QUEUE_H
