@@ -167,7 +167,7 @@ BOOST_AUTO_TEST_CASE(unit_test_create_segments_and_remove_some) {
     VA block1;
     int err = dispatcher.malloc(&block1, 8);
     BOOST_CHECK_EQUAL(0, err);
-    BOOST_CHECK_EQUAL(0, (size_t)block1);
+    BOOST_CHECK_EQUAL(0, (size_t) block1);
 
     BOOST_CHECK_EQUAL(0, (*dispatcher.segments.begin()).second.segment_begin);
     BOOST_CHECK_EQUAL(8, (*dispatcher.segments.begin()).second.segment_end);
@@ -175,17 +175,18 @@ BOOST_AUTO_TEST_CASE(unit_test_create_segments_and_remove_some) {
     VA block2;
     err = dispatcher.malloc(&block2, 30);
     BOOST_CHECK_EQUAL(0, err);
-    BOOST_CHECK_EQUAL(8, (size_t)block1);
+    BOOST_CHECK_EQUAL(8, (size_t) block2);
 
-    BOOST_CHECK_EQUAL(8, (*dispatcher.segments.begin()).second.segment_begin);
-    BOOST_CHECK_EQUAL(40, (*dispatcher.segments.begin()).second.segment_end);
+    segment second = (*++dispatcher.segments.begin()).second;
+    BOOST_CHECK_EQUAL(8, second.segment_begin);
+    BOOST_CHECK_EQUAL(40, second.segment_end);
 
     err = dispatcher.free(block1);
     BOOST_CHECK_EQUAL(0, err);
 
     err = dispatcher.malloc(&block1, 8);
     BOOST_CHECK_EQUAL(0, err);
-    BOOST_CHECK_EQUAL(40, (size_t)block1);
+    BOOST_CHECK_EQUAL(8, (size_t) block1);
 
     BOOST_CHECK_EQUAL(0, (*dispatcher.segments.begin()).second.segment_begin);
     BOOST_CHECK_EQUAL(8, (*dispatcher.segments.begin()).second.segment_end);
