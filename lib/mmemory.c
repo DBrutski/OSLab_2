@@ -1,7 +1,8 @@
+#include <jmorecfg.h>
 #include "mmemory.h"
 #include "memory_dispatcher.h"
 
-memory_dispatcher *dispatcher = NULL;
+struct memory_dispatcher *dispatcher = 0;
 
 int _malloc(VA *ptr, size_t szBlock) {
     return dispatcher->malloc(ptr, szBlock);
@@ -20,7 +21,7 @@ int _write(VA ptr, void *buffer_ptr, size_t buffer_size) {
     return dispatcher->write(ptr, buffer_ptr, buffer_size);
 };
 
-bool isPowOfTwo(size_t number) {
+boolean isPowOfTwo(size_t number) {
     return !(number & number - 1);
 }
 

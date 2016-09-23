@@ -1,6 +1,6 @@
 set(CMAKE_BUILD_TYPE Debug)
 
-add_library( mmemory-lib mmemory.h mmemory.cpp memory_dispatcher.cpp memory_dispatcher.h segment.cpp segment.h page.cpp page.h memory_pager.cpp memory_pager.h)
+add_library( mmemory-lib mmemory.h mmemory.c memory_dispatcher.c memory_dispatcher.h segment.c segment.h page.c page.h memory_pager.c memory_pager.h map.c map.h queue.c queue.h)
 
 target_include_directories(mmemory-lib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 

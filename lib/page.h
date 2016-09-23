@@ -8,15 +8,11 @@
 #include "mmemory.h"
 
 struct page {
-public:
     size_t offset;
 
-    bool in_memory;
+    boolean in_memory;
 
-    page() {};
-
-    page(size_t offset, bool in_memory);
 };
 
-
+struct page create_page(size_t offset, boolean in_memory);
 #endif //NEIRONS_NETWORK_PAGE_H

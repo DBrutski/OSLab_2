@@ -2,24 +2,29 @@
 // Created by rizhi-kote on 23.9.16.
 //
 
-#include <cmath>
-#include <cstring>
+#include <math.h>
+#include <string.h>
+#include <malloc.h>
+#include <stdbool.h>
 #include "memory_pager.h"
 
-memory_pager::memory_pager(size_t page_size, size_t in_memory_pages_amount, size_t swap_pages_amount) {
+struct memory_pager * create_memory_pager(size_t page_size, size_t in_memory_pages_amount, size_t swap_pages_amount) {
+    struct memory_pager pager;
     size_t buffer_size = in_memory_pages_amount * page_size;
-    allocated_memory = new char[buffer_size];
-    this->page_size = page_size;
-    allocated_pages_amount = in_memory_pages_amount + swap_pages_amount;
-    pages_virtual_space = new page[allocated_pages_amount];
-    free_inmemory_pages = create_inmemory_pages_pull(in_memory_pages_amount, page_size);
+    pager.allocated_memory = malloc(sizeof(char)*buffer_size);
+    pager.page_size = page_size;
+    pager.allocated_pages_amount = in_memory_pages_amount + swap_pages_amount;
+    pager.pages_virtual_space = malloc(sizeof(struct page)*pager.allocated_pages_amount);
+    pager.free_inmemory_pages = pager.create_inmemory_pages_pull(in_memory_pages_amount, page_size);
     init_pages_offset(page_size);
+    return &pager;
 }
 
-queue<page> memory_pager::create_inmemory_pages_pull(size_t pages_amount, size_t page_size) {
-    queue<page> pull;
+struct queue * memory_pager::create_inmemory_pages_pull(size_t pages_amount,
+                                                                                                  size_t page_size) {
+    struct queue pull = create_queue();
     for (int i = 0; i < pages_amount; i++) {
-        page new_page(i * page_size, true);
+        struct page new_page(i * page_size, true);
         pull.push(new_page);
     }
     return pull;

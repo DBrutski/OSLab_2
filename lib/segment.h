@@ -10,15 +10,11 @@
 #include "mmemory.h"
 
 struct segment {
-public:
-    size_t segment_size = 0;
-    size_t segment_begin = 0;
-    size_t segment_end = 0;
-
-    segment() {};
-
-    segment(size_t segment_size, size_t segment_begin, size_t segment_end);
+    size_t segment_size;
+    size_t segment_begin;
+    size_t segment_end;
 };
 
+struct segment create_segment(size_t segment_size, size_t segment_begin, size_t segment_end);
 
 #endif //NEIRONS_NETWORK_SEGMENT_H

@@ -2,7 +2,7 @@
 
 #include <boost/test/included/unit_test.hpp>
 #include "mmemory.h"
-#include "mmemory.cpp"
+#include "mmemory.c"
 
 void init_manager(int n, size_t pageSize) {
     _init(n, pageSize);
