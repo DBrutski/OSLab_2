@@ -4,9 +4,24 @@
 
 #include "map.h"
 
-void map_insert(struct map *self, size_t key, struct segment data) {
-    struct list_node *node = self->first_node;
-    struct list_node new_node = create_list_node();
+map create_map() {
+    map new_map;
+    new_map.first_node = NULL;
+    new_map.last_node = NULL;
+    return new_map;
+}
+
+map_node create_list_node() {
+    map_node node;
+    node.next_p = NULL;
+    node.previos_p = NULL;
+    return node;
+}
+
+
+void map_insert(map *self, size_t key, segment data) {
+    map_node *node = self->first_node;
+    map_node new_node = create_list_node();
     if (node == NULL) {
         new_node.key = key;
         new_node.data = data;
@@ -27,12 +42,12 @@ void map_insert(struct map *self, size_t key, struct segment data) {
     self->length++;
 }
 
-size_t map_size(struct map *self) {
+size_t map_size(map *self) {
     return self->length;
 }
 
-struct segment * find_less_or_equal(struct map *self, size_t key) {
-    struct list_node *node = self->first_node;
+segment *find_less_or_equal(map *self, size_t key) {
+    map_node *node = self->first_node;
     if (node == NULL) {
         return NULL;
     }
@@ -42,6 +57,6 @@ struct segment * find_less_or_equal(struct map *self, size_t key) {
     return &node->data;
 }
 
-struct segment map_last(struct map *self) {
+segment map_last(map *self) {
     return self->last_node->data;
 }

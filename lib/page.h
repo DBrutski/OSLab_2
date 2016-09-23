@@ -7,12 +7,13 @@
 
 #include "mmemory.h"
 
-struct page {
+typedef struct {
     size_t offset;
 
     bool in_memory;
 
-};
+} page;
 
-struct page create_page(size_t offset, bool in_memory);
+page create_page(size_t offset, bool in_memory);
+
 #endif //NEIRONS_NETWORK_PAGE_H

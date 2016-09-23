@@ -9,39 +9,29 @@
 #include <stdlib.h>
 #include "segment.h"
 
-struct list_node {
+typedef struct map_node {
     size_t key;
-    struct segment data;
-    struct list_node *next_p;
-    struct list_node *previos_p;
-};
+    segment data;
+    struct map_node *next_p;
+    struct map_node *previos_p;
+} map_node;
 
-struct list_node create_list_node() {
-    struct list_node node;
-    node.next_p = NULL;
-    node.previos_p = NULL;
-    return node;
-}
+map_node create_list_node();
 
-struct map {
+typedef struct {
     size_t length;
-    struct list_node *first_node;
-    struct list_node *last_node;
-};
+    map_node *first_node;
+    map_node *last_node;
+} map;
 
-struct map create_map() {
-    struct map new_map;
-    new_map.first_node = NULL;
-    new_map.last_node = NULL;
-    return new_map;
-}
+map create_map();
 
-struct segment * find_less_or_equal(struct map *self, size_t key);
+segment *find_less_or_equal(map *self, size_t key);
 
-void map_insert(struct map *self, size_t key, struct segment data);
+void map_insert(map *self, size_t key, segment data);
 
-struct segment map_last(struct map *self);
+segment map_last(map *self);
 
-size_t map_size(struct map *self);
+size_t map_size(map *self);
 
 #endif //NEIRONS_NETWORK_MAP_H

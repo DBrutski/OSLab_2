@@ -9,12 +9,12 @@
 
 #include "mmemory.h"
 
-struct segment {
+typedef struct {
     size_t segment_size;
     size_t segment_begin;
     size_t segment_end;
-};
+} segment;
 
-struct segment create_segment(size_t segment_size, size_t segment_begin, size_t segment_end);
+segment create_segment(size_t segment_size, size_t segment_begin, size_t segment_end);
 
 #endif //NEIRONS_NETWORK_SEGMENT_H

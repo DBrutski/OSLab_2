@@ -1,8 +1,8 @@
 #define BOOST_TEST_MODULE unit_test
 
-#include <boost/test/included/unit_test.hpp>
 #include <memory_pager.h>
 #include <memory_dispatcher.h>
+#include <boost/test/included/unit_test.hpp>
 
 memory_dispatcher init_manager(int n, size_t pageSize) {
     return *create_memory_dispatcher(n, pageSize);

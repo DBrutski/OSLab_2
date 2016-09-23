@@ -4,16 +4,16 @@
 
 #include "queue.h"
 
-struct queue create_queue() {
-    struct queue out_queue;
+ queue * create_queue() {
+     queue out_queue;
     out_queue.back = NULL;
     out_queue.head = NULL;
     out_queue.size = 0;
-    return out_queue;
+    return &out_queue;
 }
 
-void queue_push(struct queue *self, struct page new_page) {
-    struct queue_node node = create_queue_node();
+void queue_push( queue *self,  page new_page) {
+     queue_node node = create_queue_node();
     node.data = new_page;
     if (self->back == NULL) {
         self->back = &node;
@@ -25,7 +25,7 @@ void queue_push(struct queue *self, struct page new_page) {
     self->size++;
 }
 
-struct page * queue_pop(struct queue *self) {
+ page * queue_pop( queue *self) {
     if (self->head == NULL) {
         return NULL;
     }
@@ -33,6 +33,13 @@ struct page * queue_pop(struct queue *self) {
     return &self->head->next_p->data;
 }
 
-size_t queue_size(struct queue *self) {
+size_t queue_size( queue *self) {
     return self->size;
+}
+
+queue_node create_queue_node() {
+    queue_node node;
+    node.next_p = NULL;
+    node.previos_p = NULL;
+    return node;
 }

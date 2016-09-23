@@ -6,8 +6,8 @@
 #include <jmorecfg.h>
 #include "page.h"
 
-struct page create_page(size_t offset, bool in_memory) {
-    struct page new_page;
+page create_page(size_t offset, bool in_memory) {
+    page new_page;
     new_page.offset = offset;
     new_page.in_memory = in_memory;
     return new_page;

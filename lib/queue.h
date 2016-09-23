@@ -9,30 +9,25 @@
 #include "map.h"
 #include "page.h"
 
-struct queue_node {
+typedef struct queue_node{
     struct queue_node *next_p;
     struct queue_node *previos_p;
-    struct page data;
-};
+    page data;
+} queue_node;
 
-struct queue_node create_queue_node(){
-    struct queue_node node;
-    node.next_p = NULL;
-    node.previos_p = NULL;
-    return node;
-}
+queue_node create_queue_node();
 
-struct queue {
-    struct queue_node *head, *back;
+typedef struct {
+    queue_node *head, *back;
     size_t size;
-};
+} queue;
 
-struct queue create_queue();
+queue * create_queue();
 
-void queue_push(struct queue *self, struct page new_page);
+void queue_push(queue *self, page new_page);
 
-struct page * queue_pop(struct queue *self);
+page *queue_pop(queue *self);
 
-size_t queue_size(struct queue *self);
+size_t queue_size(queue *self);
 
 #endif //NEIRONS_NETWORK_QUEUE_H
