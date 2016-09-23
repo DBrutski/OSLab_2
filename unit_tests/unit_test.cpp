@@ -25,7 +25,7 @@ BOOST_AUTO_TEST_CASE(unit_test_malloc_block) {
 
     segment expected_segment = (*dispatcher.segments.begin()).second;
     BOOST_CHECK_EQUAL(1, dispatcher.segments.size());
-    BOOST_CHECK_EQUAL(0, expected_segment.segment_offset);
+    BOOST_CHECK_EQUAL(0, expected_segment.segment_begin);
     BOOST_CHECK_EQUAL(8, expected_segment.segment_size);
     page *pages = expected_segment.pages;
     BOOST_CHECK(pages != NULL);

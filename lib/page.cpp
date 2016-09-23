@@ -5,10 +5,7 @@
 #include <cstring>
 #include "page.h"
 
-void page::write(size_t offset, char *buffer, size_t buffer_size) {
-    memcpy(this->buffer_pointer + offset, buffer, buffer_size);
-}
-
-void page::read(size_t offset, char *buffer_ptr, size_t buffer_size) {
-    memcpy(buffer_ptr, this->buffer_pointer + offset, buffer_size);
+page::page(size_t offset, bool in_memory) {
+    this->offset = offset;
+    this->in_memory = in_memory;
 }

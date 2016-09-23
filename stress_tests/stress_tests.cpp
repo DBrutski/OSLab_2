@@ -31,6 +31,7 @@ BOOST_AUTO_TEST_CASE(allocate_page_size_segments) {
     size_t block_size = 8;
 
     memory_dispatcher dispatcher = init_manager(10, 8);
+    memory_pager *pager = dispatcher.pager;
     test_block *test_blocks = init_test_blocks(20, block_size, block_size, 0, 0);
 
     int err;
@@ -52,14 +53,14 @@ BOOST_AUTO_TEST_CASE(allocate_page_size_segments) {
                                       readen_buffer, readen_buffer + block_size);
     }
 
-    BOOST_CHECK_EQUAL(10, dispatcher.allocated_pages_amount);
+    BOOST_CHECK_EQUAL(10, pager->allocated_pages_amount);
 
     for (int i = 0; i < 10; i += 2) {
         err = dispatcher.free(test_blocks[i].block);
         BOOST_CHECK_EQUAL(0, err);
     }
 
-    BOOST_CHECK_EQUAL(5, dispatcher.allocated_pages_amount);
+    BOOST_CHECK_EQUAL(5, pager->allocated_pages_amount);
 
     for (int i = 10; i < 15; i++) {
         VA block = test_blocks[i].block;
@@ -70,7 +71,7 @@ BOOST_AUTO_TEST_CASE(allocate_page_size_segments) {
         BOOST_CHECK_EQUAL(0, err);
     }
 
-    BOOST_CHECK_EQUAL(10, dispatcher.allocated_pages_amount);
+    BOOST_CHECK_EQUAL(10, pager->allocated_pages_amount);
 
     for (int i = 10; i < 15; i++) {
         char *readen_buffer = new char[block_size];
@@ -86,7 +87,7 @@ BOOST_AUTO_TEST_CASE(allocate_page_size_segments) {
         BOOST_CHECK_EQUAL(0, err);
     }
 
-    BOOST_CHECK_EQUAL(5, dispatcher.allocated_pages_amount);
+    BOOST_CHECK_EQUAL(5, pager->allocated_pages_amount);
 }
 
 BOOST_AUTO_TEST_CASE(write_more_then_page_segments) {

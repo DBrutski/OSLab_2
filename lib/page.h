@@ -7,15 +7,13 @@
 
 #include "mmemory.h"
 
-class page {
+struct page {
 public:
-    bool in_memory = true;
-    char *buffer_pointer = NULL;
-    size_t page_size = 0;
+    size_t offset;
 
-    void write(size_t offset, char *buffer, size_t buffer_size);
+    bool in_memory;
 
-    void read(size_t offset, char *buffer_ptr, size_t buffer_size);
+    page(size_t offset, bool in_memory);
 };
 
 
