@@ -19,7 +19,7 @@ using namespace std;
 class memory_pager {
 public:
     size_t allocated_pages_amount;
-    char *buffer = NULL;
+    char *allocated_memory = NULL;
     fstream swap_file;
     page *pages_virtual_space;
     queue<page> free_inmemory_pages;
@@ -47,11 +47,13 @@ public:
 
     void load_required_pages(size_t first_page, size_t required_pages_amount);
 
-    void write(page page, size_t page_offset, char *buffer, size_t buffer_size);
+    void write_page(page current_page, size_t page_offset, char *buffer, size_t buffer_size);
 
     bool is_memory_enought(size_t required_size);
 
     bool is_offset_in_range(size_t offset);
+
+    void read_page(page current_page, size_t page_offset, char *buffer, size_t buffer_size);
 };
 
 

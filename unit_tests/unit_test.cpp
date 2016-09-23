@@ -62,7 +62,7 @@ BOOST_AUTO_TEST_CASE(unit_test_write_buffer_to_one_page) {
     err = dispatcher.write(block1, buffer, buffer_size);
     BOOST_CHECK_EQUAL(0, err);
 
-    VA allocated_buffer = pager->buffer;
+    VA allocated_buffer = pager->allocated_memory;
     BOOST_CHECK_EQUAL_COLLECTIONS(buffer, buffer + buffer_size,
                                   allocated_buffer, allocated_buffer + buffer_size);
 }
@@ -82,7 +82,7 @@ BOOST_AUTO_TEST_CASE(unit_test_write_buffer_to_page_not_in_begin) {
     err = dispatcher.write(block1 + 5, buffer, buffer_size);
     BOOST_CHECK_EQUAL(0, err);
 
-    VA allocated_buffer = pager->buffer;
+    VA allocated_buffer = pager->allocated_memory;
     BOOST_CHECK_EQUAL_COLLECTIONS(buffer, buffer + buffer_size,
                                   allocated_buffer + 5, allocated_buffer + 5 + buffer_size);
 }
@@ -102,7 +102,7 @@ BOOST_AUTO_TEST_CASE(unit_test_write_buffer_to_two_page_not_in_begin) {
     err = dispatcher.write(block1 + 2, buffer, buffer_size);
     BOOST_CHECK_EQUAL(0, err);
 
-    VA allocated_buffer = pager->buffer;
+    VA allocated_buffer = pager->allocated_memory;
     BOOST_CHECK_EQUAL_COLLECTIONS(buffer, buffer + buffer_size,
                                   allocated_buffer + 2, allocated_buffer + 2 + buffer_size);
 }
