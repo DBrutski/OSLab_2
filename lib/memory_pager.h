@@ -15,47 +15,47 @@ static const int TO_BE_ON_THE_SAFE_SIDE = 1;
 #include "queue.h"
 
 typedef struct {
-    size_t allocated_pages_amount;
+    size_type allocated_pages_amount;
     char *allocated_memory;
 
 
-    size_t page_offset_mask;
-    size_t page_offset_bits;
+    size_type page_offset_mask;
+    size_type page_offset_bits;
 
-    page *pages_virtual_space;
+    page **pages_virtual_space;
     queue *free_inmemory_pages;
     queue *free_swap_pages;
-    size_t page_size;
+    size_type page_size;
 } memory_pager;
 
- memory_pager *create_memory_pager(size_t page_size, size_t in_memory_pages_amount, size_t swap_pages_amount);
+ memory_pager *create_memory_pager(size_type page_size, size_type in_memory_pages_amount, size_type swap_pages_amount);
 
- queue *create_inmemory_pages_pull( memory_pager *self, size_t pages_amount,
-                                         size_t page_size);
+ queue *create_inmemory_pages_pull( memory_pager *self, size_type pages_amount,
+                                         size_type page_size);
 
- segment pager_malloc( memory_pager *self, size_t virtual_offset, size_t requred_size);
+ segment * pager_malloc(memory_pager *self, size_type virtual_offset, size_type requred_size);
 
-int pager_write( memory_pager *self, size_t begin_virtual_address, char *buffer, size_t buffer_size);
+int pager_write( memory_pager *self, size_type begin_virtual_address, char *buffer, size_type buffer_size);
 
-int pager_read( memory_pager *self, size_t begin_virtual_address, char *buffer, size_t buffer_size);
+int pager_read( memory_pager *self, size_type begin_virtual_address, char *buffer, size_type buffer_size);
 
-int pager_free( memory_pager *self, size_t begin_virtual_address, size_t end_virtual_address);
+int pager_free( memory_pager *self, size_type begin_virtual_address, size_type end_virtual_address);
 
-size_t get_required_pages_amount( memory_pager *self, int required_size);
+size_type get_required_pages_amount( memory_pager *self, int required_size);
 
-void init_pages_offset( memory_pager *self, size_t page_size);
+void init_pages_offset( memory_pager *self, size_type page_size);
 
 
-void load_required_pages( memory_pager *self, size_t first_page, size_t required_pages_amount);
+void load_required_pages( memory_pager *self, size_type first_page, size_type required_pages_amount);
 
-void write_page( memory_pager *self,  page current_page, size_t page_offset, char *buffer,
-                size_t buffer_size);
+void write_page(memory_pager *self, page *current_page, size_type page_offset, char *buffer,
+                size_type buffer_size);
 
-bool is_memory_enought( memory_pager *self, size_t required_size);
+bool is_memory_enought( memory_pager *self, size_type required_size);
 
-bool is_offset_in_range( memory_pager *self, size_t offset);
+bool is_offset_in_range( memory_pager *self, size_type offset);
 
-void read_page( memory_pager *self,  page current_page, size_t page_offset, char *buffer,
-               size_t buffer_size);
+void read_page(memory_pager *self, page *current_page, size_type page_offset, char *buffer,
+               size_type buffer_size);
 
 #endif //NEIRONS_NETWORK_PAGER_H

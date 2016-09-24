@@ -10,28 +10,28 @@
 #include "segment.h"
 
 typedef struct map_node {
-    size_t key;
-    segment data;
+    size_type key;
+    segment *data;
     struct map_node *next_p;
     struct map_node *previos_p;
 } map_node;
 
-map_node create_list_node();
+map_node * create_list_node();
 
 typedef struct {
-    size_t length;
+    size_type length;
     map_node *first_node;
     map_node *last_node;
 } map;
 
-map create_map();
+map * create_map();
 
-segment *find_less_or_equal(map *self, size_t key);
+segment *find_less_or_equal(map *self, size_type key);
 
-void map_insert(map *self, size_t key, segment data);
+void map_insert(map *self, size_type key, segment *data);
 
-segment map_last(map *self);
+segment * map_last(map *self);
 
-size_t map_size(map *self);
+size_type map_size(map *self);
 
 #endif //NEIRONS_NETWORK_MAP_H

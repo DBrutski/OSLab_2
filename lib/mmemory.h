@@ -1,7 +1,6 @@
 #ifndef MMEMORY
 #define MMEMORY
 
-#include <stdlib.h>
 #include <stdbool.h>
 /************************************************************************
 		Лабораторная работа №2
@@ -13,8 +12,7 @@
 
 
 typedef char *VA;                // Тип описывающий адрес блока
-
-
+typedef unsigned long size_type;
 /**
  	@func	_malloc	
  	@brief	Выделяет блок памяти определенного размера
@@ -28,7 +26,7 @@ typedef char *VA;                // Тип описывающий адрес б�
 	@retval	-2	нехватка памяти
 	@retval	1	неизвестная ошибка
  **/
-int _malloc(VA *ptr, size_t szBlock);
+int _malloc(VA *ptr, size_type szBlock);
 
 
 /**
@@ -59,7 +57,7 @@ int _free(VA ptr);
 	@retval	-2	доступ за пределы блока
 	@retval	1	неизвестная ошибка
 **/
-int _read(VA ptr, void *buffer_ptr, size_t buffer_size);
+int _read(VA ptr, void *buffer_ptr, size_type buffer_size);
 
 
 /**
@@ -76,7 +74,7 @@ int _read(VA ptr, void *buffer_ptr, size_t buffer_size);
 	@retval	-2	доступ за пределы блока
 	@retval	1	неизвестная ошибка
  **/
-int _write(VA ptr, void *buffer_ptr, size_t buffer_size);
+int _write(VA ptr, void *buffer_ptr, size_type buffer_size);
 
 
 /**
@@ -93,6 +91,6 @@ int _write(VA ptr, void *buffer_ptr, size_t buffer_size);
 	@retval	-1	неверные параметры
 	@retval	1	неизвестная ошибка
  **/
-int _init(int n, size_t szPage);
+int _init(int n, size_type szPage);
 
 #endif

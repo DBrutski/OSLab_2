@@ -4,7 +4,7 @@
 #include "mmemory.h"
 #include "mmemory.c"
 
-void init_manager(int n, size_t pageSize) {
+void init_manager(int n, size_type pageSize) {
     _init(n, pageSize);
 }
 
@@ -49,7 +49,7 @@ BOOST_AUTO_TEST_CASE(write_char_block) {
     BOOST_CHECK_EQUAL(0, err);
 
     char *writen_block = "segment size = 18";
-    size_t buffer_size = 8;
+    size_type buffer_size = 8;
     err = _write(block, writen_block, buffer_size);
     BOOST_CHECK_EQUAL(0, err);
 
@@ -72,7 +72,7 @@ BOOST_AUTO_TEST_CASE(write_char_block_in_two_pages) {
     BOOST_CHECK_EQUAL(0, err);
 
     char *writen_block = "segment size = 18";
-    size_t buffer_size = 18;
+    size_type buffer_size = 18;
     err = _write(block, writen_block, buffer_size);
     BOOST_CHECK_EQUAL(0, err);
 
@@ -95,7 +95,7 @@ BOOST_AUTO_TEST_CASE(write_char_block_in_to_small_block) {
 
 
     char *writen_block = "segment size = 18";
-    size_t buffer_size = 18;
+    size_type buffer_size = 18;
     err = _write(block, writen_block, buffer_size);
     BOOST_CHECK_EQUAL(-2, err);
     dispatcher->~memory_dispatcher();
@@ -111,7 +111,7 @@ BOOST_AUTO_TEST_CASE(write_char_block_not_in_block_beginning) {
 
     block += 5;
     char *writen_block = "segment size = 18";
-    size_t buffer_size = 18;
+    size_type buffer_size = 18;
     err = _write(block, writen_block, buffer_size);
     BOOST_CHECK_EQUAL(0, err);
 
@@ -134,7 +134,7 @@ BOOST_AUTO_TEST_CASE(write_int_block) {
 
     block += 5;
     int *writen_block = new int[5]{1, 2, 3, 4, 5};
-    size_t buffer_size = 5 * sizeof(int);
+    size_type buffer_size = 5 * sizeof(int);
     err = _write(block, writen_block, buffer_size);
     BOOST_CHECK_EQUAL(0, err);
 

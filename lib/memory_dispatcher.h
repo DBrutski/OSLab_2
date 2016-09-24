@@ -23,21 +23,21 @@ typedef struct {
     int page_size;
 } memory_dispatcher;
 
-memory_dispatcher *create_memory_dispatcher(size_t page_amount, size_t page_size);
+memory_dispatcher *create_memory_dispatcher(size_type page_amount, size_type page_size);
 
-int dispatcher_malloc(memory_dispatcher *self, VA *ptr, size_t segment_size);
+int dispatcher_malloc(memory_dispatcher *self, VA *ptr, size_type segment_size);
 
-bool check_enough_memory(memory_dispatcher *self, size_t required_size);
+bool check_enough_memory(memory_dispatcher *self, size_type required_size);
 
-int allocate_memory(memory_dispatcher *self, VA *ptr, size_t segment_size);
+int allocate_memory(memory_dispatcher *self, VA *ptr, size_type segment_size);
 
-segment create_new_segment(memory_dispatcher *self, size_t segment_size);
+segment * create_new_segment(memory_dispatcher *self, size_type segment_size);
 
-int dispatcher_write(memory_dispatcher *self, VA ptr, void *buffer_ptr, size_t buffer_size);
+int dispatcher_write(memory_dispatcher *self, VA block, void *buffer_ptr, size_type buffer_size);
 
-int get_segment(memory_dispatcher *self, segment *segment_ptr, size_t *segment_offset, VA memory_offset);
+int get_segment(memory_dispatcher *self, segment *segment_ptr, size_type *in_segment_offset, VA memory_offset);
 
-int dispatcher_read(memory_dispatcher *self, VA ptr, void *buffer, size_t buffer_size);
+int dispatcher_read(memory_dispatcher *self, VA ptr, void *buffer, size_type buffer_size);
 
 int dispatcher_free(memory_dispatcher *self, VA segment_ptr);
 
