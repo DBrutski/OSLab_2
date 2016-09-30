@@ -13,8 +13,11 @@ typedef struct {
     size_type segment_size;
     size_type segment_begin;
     size_type segment_end;
+    size_type pages_amount;
+    page **pages;
 } segment;
 
-segment * create_segment(size_type segment_size, size_type segment_begin, size_type segment_end);
+segment *create_segment(size_type segment_size, size_type segment_begin, size_type segment_end, size_type pages_amount,
+                        page **pages);
 
 #endif //NEIRONS_NETWORK_SEGMENT_H

@@ -8,6 +8,7 @@ map *create_map() {
     map *new_map = malloc(sizeof(map));
     new_map->first_node = NULL;
     new_map->last_node = NULL;
+    new_map->length = 0;
     return new_map;
 }
 
@@ -60,4 +61,16 @@ segment *find_less_or_equal(map *self, size_type key) {
 
 segment *map_last(map *self) {
     return self->last_node->data;
+}
+
+void free_map(map *map1) {
+    map_node *node = map1->first_node;
+    if (node != NULL) {
+        while (node->next_p != NULL) {
+            map_node *node_for_free = node;
+            node = node->next_p;
+            free(node_for_free);
+        }
+    }
+    free(map1);
 }

@@ -24,6 +24,8 @@ typedef struct {
 
 queue * create_queue();
 
+void free_queue(queue *);
+
 void queue_push(queue *self, page *new_page);
 
 page *queue_pop(queue *self);

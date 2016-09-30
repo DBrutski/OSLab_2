@@ -5,7 +5,7 @@
 #include "queue.h"
 
 queue *create_queue() {
-    queue *out_queue = malloc(sizeof(queue));
+    queue *out_queue = (queue *) malloc(sizeof(queue));
     out_queue->last = NULL;
     out_queue->first = NULL;
     out_queue->size = 0;
@@ -52,4 +52,16 @@ queue_node *create_queue_node() {
     node->next_p = NULL;
     node->previos_p = NULL;
     return node;
+}
+
+void free_queue(queue *queue1) {
+    queue_node *node = queue1->first;
+    if (node != NULL) {
+        while (node->next_p != NULL) {
+            queue_node *node_to_free = node;
+            node = node->next_p;
+            free(node_to_free);
+        }
+    }
+    free(queue1);
 }

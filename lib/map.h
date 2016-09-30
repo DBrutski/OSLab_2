@@ -25,6 +25,7 @@ typedef struct {
 } map;
 
 map * create_map();
+void free_map(map *map1);
 
 segment *find_less_or_equal(map *self, size_type key);
 
