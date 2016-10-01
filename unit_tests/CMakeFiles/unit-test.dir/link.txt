@@ -1,1 +1,0 @@
-/usr/bin/cc  -Wall  -Wpedantic -std=c11 -g    CMakeFiles/unit-test.dir/unit_test.c.o  -o unit-test -rdynamic ../lib/libmmemory-lib.a -lcmocka 

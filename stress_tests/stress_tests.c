@@ -63,7 +63,6 @@ void allocate_page_size_segments() {
     for (int i = 0; i < 10; i++) {
         err = dispatcher_malloc(dispatcher, &(test_blocks[i].block), 8);
         assert(check_equal(0, err));
-        assert(pager->pages_virtual_space[i]->offset == i * 8);
 
     }
 
@@ -80,6 +79,7 @@ void allocate_page_size_segments() {
 
         assert(check_equal_collection(test_blocks[i].buffer, test_blocks[i].buffer + block_size,
                                       readen_buffer, readen_buffer + block_size));
+        free(readen_buffer);
     }
 
     assert(check_equal(10, pager->allocated_pages_amount));

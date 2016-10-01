@@ -42,7 +42,7 @@ int pager_write(memory_pager *self, segment *current_segment, size_type in_segme
 int pager_read(memory_pager *self, segment *current_segment, size_type in_segment_offset, char *buffer,
                size_type buffer_size);
 
-int pager_free(memory_pager *self, size_type begin_virtual_address, size_type end_virtual_address);
+int pager_free(memory_pager *self, segment *freed_segment);
 
 size_type get_required_pages_amount(memory_pager *self, int required_size);
 

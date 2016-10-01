@@ -20,4 +20,6 @@ typedef struct {
 segment *create_segment(size_type segment_size, size_type segment_begin, size_type segment_end, size_type pages_amount,
                         page **pages);
 
+void free_segment(segment *freed_segment);
+
 #endif //NEIRONS_NETWORK_SEGMENT_H

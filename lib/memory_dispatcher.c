@@ -34,49 +34,57 @@ segment *create_new_segment(memory_dispatcher *self, size_type segment_size) {
 }
 
 int dispatcher_write(memory_dispatcher *self, VA block, void *buffer_ptr, size_type buffer_size) {
-    segment segment_ptr;
+    segment *segment_ptr = (segment *) malloc(sizeof(segment_ptr));
     size_type in_segment_offset;
     int err = get_segment(self, &segment_ptr, &in_segment_offset, block);
     if (err != 0) {
         return err;
     }
 
-    if (in_segment_offset + buffer_size > segment_ptr.segment_size) {
+    if (in_segment_offset + buffer_size > segment_ptr->segment_size) {
         return OUT_OF_RANGE_ERROR;
     }
-    pager_write(self->pager, &segment_ptr, in_segment_offset, (char *) buffer_ptr, buffer_size);
+    pager_write(self->pager, segment_ptr, in_segment_offset, (char *) buffer_ptr, buffer_size);
     return SUCCESSFUL_CODE;
 }
 
-int get_segment(memory_dispatcher *self, segment *segment_ptr, size_type *in_segment_offset, VA memory_offset) {
+int get_segment(memory_dispatcher *self, segment **segment_ptr, size_type *in_segment_offset, VA memory_offset) {
     size_type offset = (size_type) memory_offset;
-    if(!is_offset_in_range(self->pager, offset)){
+    if (!is_offset_in_range(self->pager, offset)) {
         return OUT_OF_RANGE_ERROR;
     };
     segment *current_segment = find_less_or_equal(self->segments, offset);
-    *segment_ptr = *current_segment;
+    *segment_ptr = current_segment;
     *in_segment_offset = offset - current_segment->segment_begin;
     return SUCCESSFUL_CODE;
 }
 
 int dispatcher_read(memory_dispatcher *self, VA ptr, void *buffer, size_type buffer_size) {
-    segment segment;
+    segment *segment;
     size_type segment_offset;
     int err = get_segment(self, &segment, &segment_offset, ptr);
     if (err != 0) {
         return err;
     }
 
-    if (segment_offset + buffer_size > segment.segment_size) {
+    if (segment_offset + buffer_size > segment->segment_size) {
         return OUT_OF_RANGE_ERROR;
     }
 
-    err = pager_read(self->pager, &segment, segment.segment_begin + segment_offset, (char *) buffer, buffer_size);
+    err = pager_read(self->pager, segment, segment->segment_begin + segment_offset, (char *) buffer, buffer_size);
     return err;
 }
 
 int dispatcher_free(memory_dispatcher *self, VA segment_ptr) {
-    return 0;
+    segment *freed_segment;
+    size_type offset;
+    int err = get_segment(self, &freed_segment, &offset, segment_ptr);
+    if (!err) {
+        return err;
+    }
+    err = pager_free(self->pager, freed_segment);
+    free_segment(freed_segment);
+    return err;
 }
 
 memory_dispatcher *create_memory_dispatcher(size_type page_amount, size_type page_size) {

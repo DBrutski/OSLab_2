@@ -16,3 +16,8 @@ segment *create_segment(size_type segment_size, size_type segment_begin, size_ty
     new_segment->pages = pages;
     return new_segment;
 }
+
+void free_segment(segment *freed_segment) {
+    free(freed_segment->pages);
+    free(freed_segment);
+}

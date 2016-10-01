@@ -37,7 +37,7 @@ segment * create_new_segment(memory_dispatcher *self, size_type segment_size);
 
 int dispatcher_write(memory_dispatcher *self, VA block, void *buffer_ptr, size_type buffer_size);
 
-int get_segment(memory_dispatcher *self, segment *segment_ptr, size_type *in_segment_offset, VA memory_offset);
+int get_segment(memory_dispatcher *self, segment **segment_ptr, size_type *in_segment_offset, VA memory_offset);
 
 int dispatcher_read(memory_dispatcher *self, VA ptr, void *buffer, size_type buffer_size);
 

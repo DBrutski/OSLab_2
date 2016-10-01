@@ -82,8 +82,7 @@ int pager_write(memory_pager *self, segment *current_segment, size_type in_segme
     while (buffer_offset < buffer_size) {
         size_type readen_page_size = buffer_size - buffer_offset < self->page_size ?
                                      buffer_size - buffer_offset : self->page_size;
-
-        page *page = current_segment->pages[page_number];
+        page *page = current_segment->pages[page_number];;
         write_page(self, page, page_offset, buffer + buffer_offset, readen_page_size);
         buffer_offset += (self->page_size - page_offset);
         page_offset = 0;
@@ -147,6 +146,14 @@ void free_pager(memory_pager *pager) {
     free_queue(pager->free_inmemory_pages);
     free_queue(pager->free_swap_pages);
     free(pager);
+}
+
+int pager_free(memory_pager *self, segment *freed_segment) {
+    int pages_it;
+    for (pages_it = 0; pages_it < freed_segment->pages_amount; pages_it++) {
+        queue_push(self->free_inmemory_pages, freed_segment->pages[pages_it]);
+    }
+    return 0;
 }
 
 
