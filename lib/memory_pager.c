@@ -98,7 +98,7 @@ void load_required_pages(memory_pager *self, size_type first_page, size_type req
 
 void
 write_page(memory_pager *self, page *current_page, size_type page_offset, char *buffer, size_type buffer_size) {
-    memcpy(&self->allocated_memory + current_page->offset + page_offset, buffer, buffer_size);
+    memcpy(self->allocated_memory + current_page->offset + page_offset, buffer, buffer_size);
 }
 
 bool is_memory_enought(memory_pager *self, size_type required_size) {
@@ -139,7 +139,7 @@ int pager_read(memory_pager *self, segment *current_segment, size_type in_segmen
 
 void
 read_page(memory_pager *self, page *current_page, size_type page_offset, char *buffer, size_type buffer_size) {
-    memcpy(buffer, &(self->allocated_memory) + current_page->offset + page_offset, buffer_size);
+    memcpy(buffer, self->allocated_memory + current_page->offset + page_offset, buffer_size);
 }
 
 void free_pager(memory_pager *pager) {

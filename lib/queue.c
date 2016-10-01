@@ -48,7 +48,7 @@ size_type queue_size(queue *self) {
 }
 
 queue_node *create_queue_node() {
-    queue_node *node = malloc(sizeof(queue_node));
+    queue_node *node = (queue_node *) malloc(sizeof(queue_node));
     node->next_p = NULL;
     node->previos_p = NULL;
     return node;

@@ -10,7 +10,7 @@
 typedef struct {
     size_type offset;
 
-    bool in_memory;
+    bool is_in_memmory;
 
 } page;
 

@@ -71,7 +71,7 @@ int dispatcher_read(memory_dispatcher *self, VA ptr, void *buffer, size_type buf
         return OUT_OF_RANGE_ERROR;
     }
 
-    err = pager_read(self->pager, NULL, segment.segment_begin + segment_offset, (char *) buffer, buffer_size);
+    err = pager_read(self->pager, &segment, segment.segment_begin + segment_offset, (char *) buffer, buffer_size);
     return err;
 }
 

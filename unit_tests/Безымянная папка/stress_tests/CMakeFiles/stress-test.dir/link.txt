@@ -1,0 +1,1 @@
+/usr/bin/cc  -Wall  -Wpedantic -std=c11 -g    CMakeFiles/stress-test.dir/stress_tests.c.o CMakeFiles/stress-test.dir/__/queue_test/queue_test.c.o  -o stress-test -rdynamic ../lib/libmmemory-lib.a 

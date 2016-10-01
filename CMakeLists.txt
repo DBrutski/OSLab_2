@@ -8,6 +8,7 @@ enable_testing()
 add_subdirectory(lib ./lib)
 add_subdirectory(unit_tests)
 add_subdirectory(stress_tests)
+add_subdirectory(queue_test)
 #add_subdirectory(tests_on_c)
 
 
