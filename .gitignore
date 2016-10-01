@@ -1,1 +1,6 @@
 .idea
+*.o
+*.cmake
+*MakeFile*
+*CMakeCache*
+*.a

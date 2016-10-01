@@ -1,2 +1,0 @@
-/usr/bin/ar cr libmmemory-lib.a  CMakeFiles/mmemory-lib.dir/mmemory.c.o CMakeFiles/mmemory-lib.dir/memory_dispatcher.c.o CMakeFiles/mmemory-lib.dir/segment.c.o CMakeFiles/mmemory-lib.dir/page.c.o CMakeFiles/mmemory-lib.dir/memory_pager.c.o CMakeFiles/mmemory-lib.dir/map.c.o CMakeFiles/mmemory-lib.dir/queue.c.o
-/usr/bin/ranlib libmmemory-lib.a

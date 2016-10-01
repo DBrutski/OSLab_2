@@ -1,4 +1,0 @@
-/home/rizhi-kote/Student/rodia/OSLab_2/unit_tests/build/lib/CMakeFiles/mmemory-lib.dir
-/home/rizhi-kote/Student/rodia/OSLab_2/unit_tests/build/queue_test/CMakeFiles/queue-test.dir
-/home/rizhi-kote/Student/rodia/OSLab_2/unit_tests/build/stress_tests/CMakeFiles/stress-test.dir
-/home/rizhi-kote/Student/rodia/OSLab_2/unit_tests/build/unit_tests/CMakeFiles/unit-test.dir
