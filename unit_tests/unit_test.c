@@ -6,7 +6,7 @@
 #include <memory_dispatcher.h>
 #include <segment.h>
 
-memory_dispatcher *init_manager(int n, size_t pageSize) {
+memory_dispatcher *init_manager(size_type n, size_t pageSize) {
     return create_memory_dispatcher(n, pageSize);
 }
 

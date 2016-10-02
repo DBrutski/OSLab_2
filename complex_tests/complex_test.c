@@ -1,11 +1,8 @@
-#define BOOST_TEST_MODULE unit_test
-
 #include <assert.h>
 #include <memory_pager.h>
-#include <page.h>
 #include "memory_dispatcher.h"
 
-memory_dispatcher *init_manager(int n, size_type pageSize) {
+memory_dispatcher *init_manager(size_type n, size_type pageSize) {
     return create_memory_dispatcher(n, pageSize);
 }
 
@@ -18,6 +15,11 @@ typedef struct {
 } test_block;
 
 void write_buffer_from_dispatcher_memmory();
+
+memory_dispatcher *init_manager_with_paging(size_type pages_amount, size_type page_size) {
+    memory_dispatcher *dispatcher = create_memory_dispatcher_with_paging(pages_amount, page_size, pages_amount);
+    return dispatcher;
+}
 
 test_block *
 init_test_blocks(size_type amount, size_type min_block_size, size_type max_block_size, size_type min_offset,
@@ -226,11 +228,12 @@ void write_buffer_from_dispatcher_memmory() {
         test_block *dest_block = &test_blocks[i];
         test_block *src_block = &test_blocks[j];
         err = dispatcher_write(dispatcher, dest_block->block + dest_block->offset, src_block->block + src_block->offset,
-                         src_block->buffer_size);
+                               src_block->buffer_size);
         assert(check_equal(0, err));
 
-        char *readen_buffer = (char*)malloc(sizeof(char)*src_block->buffer_size);
-        err = dispatcher_read(dispatcher, dest_block->block+dest_block->offset, readen_buffer, src_block->buffer_size);
+        char *readen_buffer = (char *) malloc(sizeof(char) * src_block->buffer_size);
+        err = dispatcher_read(dispatcher, dest_block->block + dest_block->offset, readen_buffer,
+                              src_block->buffer_size);
         assert(check_equal(0, err));
         assert(check_equal_collection(src_block->buffer, src_block->buffer + src_block->buffer_size,
                                       readen_buffer, readen_buffer + src_block->buffer_size));
@@ -239,8 +242,38 @@ void write_buffer_from_dispatcher_memmory() {
 }
 
 void use_more_memory_than_allocated() {
-    assert(false);
+    const size_type block_size = 16;
+    const size_type buffer_size = 9;
+    const size_type segments_amount = 20;
+
+    memory_dispatcher *dispatcher = init_manager_with_paging(20, 8);
+    test_block *test_blocks = init_test_blocks(segments_amount, block_size, block_size, 1, 3, buffer_size, buffer_size);
+
+    int err;
+    for (int i = 0; i < segments_amount; i++) {
+        test_block *current_block = &test_blocks[i];
+        err = dispatcher_malloc(dispatcher, &(current_block->block), current_block->block_size);
+        assert(check_equal(0, err));
+
+        err = dispatcher_write(dispatcher, current_block->block + current_block->offset, current_block->buffer,
+                               current_block->buffer_size);
+        assert(check_equal(0, err));
+    }
+
+    for (int i = 0; i < segments_amount; i++) {
+        test_block *current_block = &test_blocks[i];
+        char *readen_buffer = malloc(sizeof(char) * current_block->buffer_size);
+        err = dispatcher_read(dispatcher, current_block->block + current_block->offset,
+                              readen_buffer, current_block->buffer_size);
+        assert(check_equal(0, err));
+
+        assert(check_equal_collection(current_block->buffer, current_block->buffer + current_block->buffer_size,
+                                      readen_buffer, readen_buffer + current_block->buffer_size));
+        free(readen_buffer);
+    }
+    free_dispatcher(dispatcher);
 }
+
 
 int main() {
     test_free_function_on_page_size_blocks();

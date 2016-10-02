@@ -4,6 +4,7 @@
 
 #include "memory_dispatcher.h"
 #include "segment.h"
+#include "external_pager.h"
 
 bool is_offset_in_range(memory_dispatcher *self, size_type offset);
 
@@ -21,7 +22,7 @@ bool check_enough_memory(memory_dispatcher *self, size_type required_size) {
 
 int allocate_memory(memory_dispatcher *self, VA *ptr, size_type segment_size) {
     segment *free_segment = create_new_segment(self, segment_size);
-    *ptr = (int) free_segment->segment_begin;
+    *ptr = (VA) free_segment->segment_begin;
     return 0;
 }
 
@@ -55,7 +56,7 @@ int dispatcher_write(memory_dispatcher *self, VA block, void *buffer_ptr, size_t
             return UNKNOWN_ERROR;
         }
         err = dispatcher_write(self, block, temp_buffer, buffer_size);
-        if(err){
+        if (err) {
             return UNKNOWN_ERROR;
         }
     } else {
@@ -66,7 +67,7 @@ int dispatcher_write(memory_dispatcher *self, VA block, void *buffer_ptr, size_t
 
 bool is_ptr_dispatchers_addres_aria(memory_dispatcher *self, void *ptr) {
     segment *last_segment = map_last(self->segments);
-    return ptr < last_segment->segment_begin + last_segment->segment_end;
+    return (size_type )ptr < last_segment->segment_begin + last_segment->segment_end;
 }
 
 int get_segment(memory_dispatcher *self, segment **segment_ptr, size_type *in_segment_offset, VA memory_offset) {
@@ -126,5 +127,12 @@ void free_dispatcher(memory_dispatcher *dispatcher) {
     free_map(dispatcher->segments);
     free_pager(dispatcher->pager);
     free(dispatcher);
+}
+
+memory_dispatcher *create_memory_dispatcher_with_paging(size_type page_amount, size_type page_size,
+                                                        size_type pages_amount_in_paging_aria) {
+    memory_dispatcher *dispatcher = create_memory_dispatcher(page_amount, page_size);
+    dispatcher->pager->out_pager = create_external_pager(pages_amount_in_paging_aria, page_size);
+    return dispatcher;
 }
 

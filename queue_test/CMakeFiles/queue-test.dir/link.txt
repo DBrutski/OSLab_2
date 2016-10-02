@@ -1,1 +1,1 @@
-/usr/bin/cc  -Wall  -Wpedantic -std=c11 -g    CMakeFiles/queue-test.dir/queue_test.c.o  -o queue-test -rdynamic ../lib/libmmemory-lib.a 
+/usr/bin/cc  -Wall -Werror -Wpedantic -std=c11 -g    CMakeFiles/queue-test.dir/queue_test.c.o  -o queue-test -rdynamic ../lib/libmmemory-lib.a 

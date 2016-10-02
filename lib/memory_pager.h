@@ -14,7 +14,7 @@ static const int TO_BE_ON_THE_SAFE_SIDE = 1;
 #include "mmemory.h"
 #include "queue.h"
 
-typedef struct {
+typedef struct memory_pager{
     size_type allocated_pages_amount;
     char *allocated_memory;
 
@@ -22,8 +22,12 @@ typedef struct {
     size_type page_offset_mask;
     size_type page_offset_bits;
 
-    queue *free_inmemory_pages;
-    queue *free_swap_pages;
+    queue *free_in_memory_pages;
+    queue *pages_to_pump_out;
+
+    struct memory_pager *out_pager;
+
+
     size_type page_size;
 } memory_pager;
 

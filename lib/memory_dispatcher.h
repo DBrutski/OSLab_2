@@ -25,6 +25,9 @@ typedef struct {
 
 void free_dispatcher(memory_dispatcher *dispatcher);
 
+memory_dispatcher *
+create_memory_dispatcher_with_paging(size_type page_amount, size_type page_size, size_type pages_amount_in_paging_aria);
+
 memory_dispatcher *create_memory_dispatcher(size_type page_amount, size_type page_size);
 
 int dispatcher_malloc(memory_dispatcher *self, VA *ptr, size_type segment_size);
