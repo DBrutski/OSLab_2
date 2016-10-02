@@ -15,9 +15,9 @@ void page_pump_up(memory_pager *self, page *pumped_in_page) {
     read_external_page(self->out_pager, pumped_in_page, temp_buffer);
     write_external_page(self->out_pager, pumped_in_page, self->allocated_memory + pumped_out_page->offset);
     write_page(self, pumped_out_page, pumped_out_page->offset, temp_buffer, self->page_size);
-    page *temp_page = pumped_in_page;
+    page temp_page = *pumped_in_page;
     *pumped_in_page = *pumped_out_page;
-    *pumped_out_page = *temp_page;
+    *pumped_out_page = temp_page;
     queue_push(self->pages_to_pump_out, pumped_in_page);
 }
 
@@ -50,12 +50,15 @@ segment *pager_malloc(memory_pager *self, size_type virtual_offset, size_type re
 
     page **pages = (page **) malloc(sizeof(page *) * required_pages_amount);
 
-    int i;
+    int i = 0;
     while (i < required_pages_amount && queue_size(self->free_in_memory_pages) > 0) {
-        pages[i++] = queue_pop(self->free_in_memory_pages);
+        pages[i] = queue_pop(self->free_in_memory_pages);
+        queue_push(self->pages_to_pump_out, pages[i]);
+        i++;
     }
     while (i < required_pages_amount && queue_size(self->out_pager->free_in_memory_pages)) {
-        pages[i++] = queue_pop(self->out_pager->free_in_memory_pages);
+        pages[i] = queue_pop(self->out_pager->free_in_memory_pages);
+        i++;
     }
 
     return create_segment(requred_size, virtual_offset, virtual_offset + required_pages_amount * self->page_size,

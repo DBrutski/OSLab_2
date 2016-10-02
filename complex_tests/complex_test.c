@@ -1,6 +1,7 @@
 #include <assert.h>
 #include <memory_pager.h>
 #include "memory_dispatcher.h"
+#include <stdio.h>
 
 memory_dispatcher *init_manager(size_type n, size_type pageSize) {
     return create_memory_dispatcher(n, pageSize);
@@ -16,8 +17,10 @@ typedef struct {
 
 void write_buffer_from_dispatcher_memmory();
 
-memory_dispatcher *init_manager_with_paging(size_type pages_amount, size_type page_size) {
-    memory_dispatcher *dispatcher = create_memory_dispatcher_with_paging(pages_amount, page_size, pages_amount);
+memory_dispatcher *
+init_manager_with_paging(size_type inmemmory_pages_amount, size_type outmemmory_pages_ammount, size_type page_size) {
+    memory_dispatcher *dispatcher = create_memory_dispatcher_with_paging(inmemmory_pages_amount, page_size,
+                                                                         outmemmory_pages_ammount);
     return dispatcher;
 }
 
@@ -59,6 +62,12 @@ bool check_equal_collection(char *begin_l, char *end_l, char *begin_r, char *end
     for (current_l = begin_l, current_r = begin_r;
          current_l < end_l && current_r < end_r && is_equal; current_l++, current_r++) {
         is_equal &= *current_l == *current_r;
+    }
+    if (!is_equal) {
+        for (current_l = begin_l, current_r = begin_r;
+             current_l < end_l && current_r < end_r; current_l++, current_r++) {
+            printf("%i == %i\n", *current_l, *current_r);
+        }
     }
     return is_equal;
 }
@@ -244,9 +253,9 @@ void write_buffer_from_dispatcher_memmory() {
 void use_more_memory_than_allocated() {
     const size_type block_size = 16;
     const size_type buffer_size = 9;
-    const size_type segments_amount = 20;
+    const size_type segments_amount = 10;
 
-    memory_dispatcher *dispatcher = init_manager_with_paging(20, 8);
+    memory_dispatcher *dispatcher = init_manager_with_paging(10, 10, 8);
     test_block *test_blocks = init_test_blocks(segments_amount, block_size, block_size, 1, 3, buffer_size, buffer_size);
 
     int err;
@@ -274,11 +283,50 @@ void use_more_memory_than_allocated() {
     free_dispatcher(dispatcher);
 }
 
+void test_page_size_paging() {
+    const size_type block_size = 8;
+    const size_type buffer_size = 8;
+    const size_type segments_amount = 4;
+
+    memory_dispatcher *dispatcher = init_manager_with_paging(2, 2, 8);
+    test_block *test_blocks = init_test_blocks(segments_amount, block_size, block_size, 0, 0, buffer_size, buffer_size);
+
+    int err;
+    for (
+            int i = 0;
+            i < segments_amount;
+            i++) {
+        test_block *current_block = &test_blocks[i];
+        err = dispatcher_malloc(dispatcher, &(current_block->block), current_block->block_size);
+        assert(check_equal(0, err));
+
+        err = dispatcher_write(dispatcher, current_block->block + current_block->offset, current_block->buffer,
+                               current_block->buffer_size);
+        assert(check_equal(0, err));
+    }
+
+    for (
+            int i = 0;
+            i < segments_amount;
+            i++) {
+        test_block *current_block = &test_blocks[i];
+        char *readen_buffer = malloc(sizeof(char) * current_block->buffer_size);
+        err = dispatcher_read(dispatcher, current_block->block + current_block->offset,
+                              readen_buffer, current_block->buffer_size);
+        assert(check_equal(0, err));
+
+        assert(check_equal_collection(current_block->buffer, current_block->buffer + current_block->buffer_size,
+                                      readen_buffer, readen_buffer + current_block->buffer_size));
+        free(readen_buffer);
+    }
+    free_dispatcher(dispatcher);
+}
 
 int main() {
     test_free_function_on_page_size_blocks();
     test_work_with_buffer_more_then_page_size_and_write_to_random_place();
     write_buffer_from_dispatcher_memmory();
+    test_page_size_paging();
     use_more_memory_than_allocated();
     return 0;
 }

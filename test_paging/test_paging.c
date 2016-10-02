@@ -68,14 +68,8 @@ void test_write_to_pumped_page() {
     assert(check_equal(false, first_page->is_in_memmory));
 }
 
-void test_read_from_pumped_page() {
-    assert(false);
-}
-
-
 int main() {
     test_init_pager();
     test_malloc_pager_with_paging();
     test_write_to_pumped_page();
-    test_read_from_pumped_page();
 }

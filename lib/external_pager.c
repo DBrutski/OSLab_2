@@ -11,7 +11,7 @@ queue *create_external_pages_pull(memory_pager *self, size_type pages_amount, si
 
 memory_pager *create_external_pager(size_type pages_amount, size_type page_size) {
     memory_pager *pager = (memory_pager *) malloc(sizeof(memory_pager));
-    pager->allocated_memory = (char *) malloc(sizeof(char) * pages_amount);
+    pager->allocated_memory = (char *) malloc(sizeof(char) * pages_amount * page_size);
     pager->page_size = page_size;
     init_pages_offset(pager, page_size);
     pager->allocated_pages_amount = pages_amount;
