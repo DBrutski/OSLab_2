@@ -6,15 +6,13 @@
 #include <stdbool.h>
 #include "memory_pager.h"
 #include "external_pager.h"
-#include "segment.h"
-#include "page.h"
 
 void page_pump_up(memory_pager *self, page *pumped_in_page) {
     page *pumped_out_page = queue_pop(self->pages_to_pump_out);
     char *temp_buffer = (char *) malloc(sizeof(char) * self->page_size);
     read_external_page(self->out_pager, pumped_in_page, temp_buffer);
     write_external_page(self->out_pager, pumped_in_page, self->allocated_memory + pumped_out_page->offset);
-    write_page(self, pumped_out_page, pumped_out_page->offset, temp_buffer, self->page_size);
+    write_page(self, pumped_out_page, 0, temp_buffer, self->page_size);
     page temp_page = *pumped_in_page;
     *pumped_in_page = *pumped_out_page;
     *pumped_out_page = temp_page;
@@ -89,7 +87,7 @@ void init_pages_offset(memory_pager *self, size_type page_size) {
 int pager_write(memory_pager *self, segment *current_segment, size_type in_segment_oofset, char *buffer,
                 size_type buffer_size) {
     size_type first_page = in_segment_oofset >> self->page_offset_bits;
-    size_type require_pages_amount = get_required_pages_amount(self, buffer_size) + TO_BE_ON_THE_SAFE_SIDE;
+    size_type require_pages_amount = get_required_pages_amount(self, buffer_size);
 
     load_required_pages(self, first_page, require_pages_amount);
 
@@ -101,10 +99,12 @@ int pager_write(memory_pager *self, segment *current_segment, size_type in_segme
 
     size_type page_number = first_page;
     while (buffer_offset < buffer_size) {
-        size_type readen_page_size = buffer_size - buffer_offset < self->page_size ?
-                                     buffer_size - buffer_offset : self->page_size;
+
+        size_type buffer_size_to_page =
+                (buffer_size - buffer_offset) < (self->page_size - page_offset) ? buffer_size - buffer_offset :
+                self->page_size - page_offset;
         page *page = current_segment->pages[page_number];;
-        write_page(self, page, page_offset, buffer + buffer_offset, readen_page_size);
+        write_page(self, page, page_offset, buffer + buffer_offset, buffer_size_to_page);
         buffer_offset += (self->page_size - page_offset);
         page_offset = 0;
         page_number++;
@@ -134,7 +134,7 @@ bool is_memory_enought(memory_pager *self, size_type required_size) {
 int pager_read(memory_pager *self, segment *current_segment, size_type in_segment_offset, char *buffer,
                size_type buffer_size) {
     size_type first_page = in_segment_offset >> self->page_offset_bits;
-    size_type require_pages_amount = get_required_pages_amount(self, buffer_size) + TO_BE_ON_THE_SAFE_SIDE;
+    size_type require_pages_amount = get_required_pages_amount(self, buffer_size);
 
     load_required_pages(self, first_page, require_pages_amount);
 

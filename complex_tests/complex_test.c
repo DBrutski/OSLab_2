@@ -250,12 +250,42 @@ void write_buffer_from_dispatcher_memmory() {
     }
 }
 
-void use_more_memory_than_allocated() {
-    const size_type block_size = 16;
-    const size_type buffer_size = 9;
-    const size_type segments_amount = 10;
+void check_corect_write(memory_dispatcher *dispatcher, test_block *current_block) {
+    segment *current_segment;
+    size_type offset;
+    get_segment(dispatcher, &current_segment, &offset, current_block->block);
+    offset = current_block->offset;
+    size_type page_number_offset = dispatcher->pager->page_offset_bits;
+    size_type page_offset_mask = dispatcher->pager->page_offset_mask;
+    size_type in_page_offset = offset & page_offset_mask;
+    char *expected_buffer = current_block->buffer;
+    for (int i = offset >> page_number_offset;
+         i < current_segment->pages_amount && expected_buffer < expected_buffer + current_block->buffer_size; i++) {
+        page *current_page = current_segment->pages[i];
+        char *saved_page_buffer;
+        if (current_page->is_in_memmory) {
+            saved_page_buffer = dispatcher->pager->allocated_memory + current_page->offset + in_page_offset;
+        } else {
+            saved_page_buffer =
+                    dispatcher->pager->out_pager->allocated_memory + current_page->offset + in_page_offset;
+        }
+        size_type readen_buffer_part_size = dispatcher->pager->page_size - in_page_offset;
+        readen_buffer_part_size =
+                readen_buffer_part_size > current_block->buffer_size + (current_block->buffer - expected_buffer) ?
+                current_block->buffer_size + (current_block->buffer - expected_buffer) : readen_buffer_part_size;
+        assert(check_equal_collection(expected_buffer, expected_buffer + readen_buffer_part_size, saved_page_buffer,
+                                      saved_page_buffer + readen_buffer_part_size));
+        expected_buffer += readen_buffer_part_size;
+        in_page_offset = 0;
+    }
+}
 
-    memory_dispatcher *dispatcher = init_manager_with_paging(10, 10, 8);
+void use_more_memory_than_allocated() {
+    const size_type block_size = 8;
+    const size_type buffer_size = 4;
+    const size_type segments_amount = 5;
+
+    memory_dispatcher *dispatcher = init_manager_with_paging(4, 6, 4);
     test_block *test_blocks = init_test_blocks(segments_amount, block_size, block_size, 1, 3, buffer_size, buffer_size);
 
     int err;
@@ -267,6 +297,9 @@ void use_more_memory_than_allocated() {
         err = dispatcher_write(dispatcher, current_block->block + current_block->offset, current_block->buffer,
                                current_block->buffer_size);
         assert(check_equal(0, err));
+
+        check_corect_write(dispatcher, current_block);
+
     }
 
     for (int i = 0; i < segments_amount; i++) {
@@ -288,15 +321,12 @@ void test_page_size_paging() {
     const size_type buffer_size = 8;
     const size_type segments_amount = 4;
 
-    memory_dispatcher *dispatcher = init_manager_with_paging(2, 2, 8);
+    memory_dispatcher *dispatcher = init_manager_with_paging(4, 4, 4);
     test_block *test_blocks = init_test_blocks(segments_amount, block_size, block_size, 0, 0, buffer_size, buffer_size);
 
     int err;
-    for (
-            int i = 0;
-            i < segments_amount;
-            i++) {
-        test_block *current_block = &test_blocks[i];
+    {
+        test_block *current_block = &test_blocks[0];
         err = dispatcher_malloc(dispatcher, &(current_block->block), current_block->block_size);
         assert(check_equal(0, err));
 
@@ -305,11 +335,74 @@ void test_page_size_paging() {
         assert(check_equal(0, err));
     }
 
-    for (
-            int i = 0;
-            i < segments_amount;
-            i++) {
-        test_block *current_block = &test_blocks[i];
+    {
+        test_block *current_block = &test_blocks[1];
+        err = dispatcher_malloc(dispatcher, &(current_block->block), current_block->block_size);
+        assert(check_equal(0, err));
+
+        err = dispatcher_write(dispatcher, current_block->block + current_block->offset, current_block->buffer,
+                               current_block->buffer_size);
+        assert(check_equal(0, err));
+    }
+
+    {
+        test_block *current_block = &test_blocks[2];
+        err = dispatcher_malloc(dispatcher, &(current_block->block), current_block->block_size);
+        assert(check_equal(0, err));
+
+        err = dispatcher_write(dispatcher, current_block->block + current_block->offset, current_block->buffer,
+                               current_block->buffer_size);
+        assert(check_equal(0, err));
+    }
+
+    {
+        test_block *current_block = &test_blocks[3];
+        err = dispatcher_malloc(dispatcher, &(current_block->block), current_block->block_size);
+        assert(check_equal(0, err));
+
+        err = dispatcher_write(dispatcher, current_block->block + current_block->offset, current_block->buffer,
+                               current_block->buffer_size);
+        assert(check_equal(0, err));
+    }
+
+    {
+        test_block *current_block = &test_blocks[0];
+        char *readen_buffer = malloc(sizeof(char) * current_block->buffer_size);
+        err = dispatcher_read(dispatcher, current_block->block + current_block->offset,
+                              readen_buffer, current_block->buffer_size);
+        assert(check_equal(0, err));
+
+        assert(check_equal_collection(current_block->buffer, current_block->buffer + current_block->buffer_size,
+                                      readen_buffer, readen_buffer + current_block->buffer_size));
+        free(readen_buffer);
+    }
+
+    {
+        test_block *current_block = &test_blocks[1];
+        char *readen_buffer = malloc(sizeof(char) * current_block->buffer_size);
+        err = dispatcher_read(dispatcher, current_block->block + current_block->offset,
+                              readen_buffer, current_block->buffer_size);
+        assert(check_equal(0, err));
+
+        assert(check_equal_collection(current_block->buffer, current_block->buffer + current_block->buffer_size,
+                                      readen_buffer, readen_buffer + current_block->buffer_size));
+        free(readen_buffer);
+    }
+
+    {
+        test_block *current_block = &test_blocks[2];
+        char *readen_buffer = malloc(sizeof(char) * current_block->buffer_size);
+        err = dispatcher_read(dispatcher, current_block->block + current_block->offset,
+                              readen_buffer, current_block->buffer_size);
+        assert(check_equal(0, err));
+
+        assert(check_equal_collection(current_block->buffer, current_block->buffer + current_block->buffer_size,
+                                      readen_buffer, readen_buffer + current_block->buffer_size));
+        free(readen_buffer);
+    }
+
+    {
+        test_block *current_block = &test_blocks[3];
         char *readen_buffer = malloc(sizeof(char) * current_block->buffer_size);
         err = dispatcher_read(dispatcher, current_block->block + current_block->offset,
                               readen_buffer, current_block->buffer_size);

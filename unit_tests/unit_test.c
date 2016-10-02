@@ -2,9 +2,7 @@
 
 #include <memory_pager.h>
 #include <assert.h>
-#include <map.h>
 #include <memory_dispatcher.h>
-#include <segment.h>
 
 memory_dispatcher *init_manager(size_type n, size_t pageSize) {
     return create_memory_dispatcher(n, pageSize);
@@ -195,41 +193,6 @@ void unit_test_malloc_many_pages() {
     free_dispatcher(dispatcher);
 }
 
-void unit_test_create_segments_and_remove_some() {
-    memory_dispatcher *dispatcher = init_manager(5, 8);
-    VA block1;
-    int err = dispatcher_malloc(dispatcher, &block1, 8);
-    assert(check_equal(0, err));
-    assert(check_equal(0, (size_t) block1));
-
-    segment *checked_segment;
-    size_type offset;
-    get_segment(dispatcher, &checked_segment, &offset, block1);
-    assert(check_equal(1, checked_segment->pages_amount));
-    assert(check_equal(0, checked_segment->segment_begin));
-
-
-    VA block2;
-    err = dispatcher_malloc(dispatcher, &block2, 30);
-    assert(check_equal(0, err));
-    assert(check_equal(8, (size_t) block2));
-
-    get_segment(dispatcher, &checked_segment, &offset, block2);
-    assert(check_equal(4, checked_segment->pages_amount));
-    assert(check_equal(8, checked_segment->segment_begin));
-
-    err = dispatcher_free(dispatcher, block1);
-    assert(check_equal(0, err));
-
-    err = dispatcher_malloc(dispatcher, &block1, 8);
-    assert(check_equal(0, err));
-    assert(check_equal(40, (size_t) block1));
-
-    assert(check_equal(0, dispatcher->segments->first_node->data->segment_begin));
-    assert(check_equal(8, dispatcher->segments->first_node->data->segment_end));
-    free_dispatcher(dispatcher);
-}
-
 int main() {
     unit_test_init_dispatcher();
     unit_test_malloc_block();
@@ -240,5 +203,4 @@ int main() {
     unit_test_write_buffer_to_two_page_not_in_begin();
     unit_test_read_buffer_from_one_page();
     unit_test_malloc_many_pages();
-    unit_test_create_segments_and_remove_some();
 }
