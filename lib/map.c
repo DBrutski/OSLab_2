@@ -53,7 +53,7 @@ segment *find_less_or_equal(map *self, size_type key) {
     if (node == NULL) {
         return NULL;
     }
-    while (node->next_p != NULL && node->key < key) {
+    while (node->next_p != NULL && node->next_p->key <= key) {
         node = node->next_p;
     }
     return node->data;

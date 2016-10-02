@@ -7,6 +7,8 @@
 
 bool is_offset_in_range(memory_dispatcher *self, size_type offset);
 
+bool is_ptr_dispatchers_addres_aria(memory_dispatcher *self, void *ptr);
+
 int dispatcher_malloc(memory_dispatcher *self, VA *ptr, size_type segment_size) {
     if (!check_enough_memory(self, segment_size)) { return NOT_ENOUGH_MEMORY_ERROR; }
     int err = allocate_memory(self, ptr, segment_size);
@@ -46,8 +48,25 @@ int dispatcher_write(memory_dispatcher *self, VA block, void *buffer_ptr, size_t
     if (in_segment_offset + buffer_size > segment_ptr->segment_size) {
         return OUT_OF_RANGE_ERROR;
     }
-    pager_write(self->pager, segment_ptr, in_segment_offset, (char *) buffer_ptr, buffer_size);
+    if (is_ptr_dispatchers_addres_aria(self, buffer_ptr)) {
+        char *temp_buffer = (char *) malloc(sizeof(char) * buffer_size);
+        err = dispatcher_read(self, buffer_ptr, temp_buffer, buffer_size);
+        if (err) {
+            return UNKNOWN_ERROR;
+        }
+        err = dispatcher_write(self, block, temp_buffer, buffer_size);
+        if(err){
+            return UNKNOWN_ERROR;
+        }
+    } else {
+        pager_write(self->pager, segment_ptr, in_segment_offset, (char *) buffer_ptr, buffer_size);
+    }
     return SUCCESSFUL_CODE;
+}
+
+bool is_ptr_dispatchers_addres_aria(memory_dispatcher *self, void *ptr) {
+    segment *last_segment = map_last(self->segments);
+    return ptr < last_segment->segment_begin + last_segment->segment_end;
 }
 
 int get_segment(memory_dispatcher *self, segment **segment_ptr, size_type *in_segment_offset, VA memory_offset) {
