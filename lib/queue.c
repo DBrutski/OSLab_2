@@ -33,6 +33,10 @@ page *queue_pop(queue *self) {
     page *out;
     if (self->size == 1) {
         out = self->first->data;
+        free(self->first);
+        self->first = NULL;
+        self->last = NULL;
+        self->size--;
     } else {
         queue_node *first_node = self->first;
         self->first = first_node->previos_p;

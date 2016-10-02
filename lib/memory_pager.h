@@ -56,8 +56,6 @@ void write_page(memory_pager *self, page *current_page, size_type page_offset, c
 
 bool is_memory_enought(memory_pager *self, size_type required_size);
 
-bool is_offset_in_range(memory_pager *self, size_type offset);
-
 void read_page(memory_pager *self, page *current_page, size_type page_offset, char *buffer,
                size_type buffer_size);
 

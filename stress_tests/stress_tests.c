@@ -15,6 +15,8 @@ typedef struct {
     size_type offset;
 } test_block;
 
+void write_buffer_from_dispathcer_memmory();
+
 test_block *
 init_test_blocks(size_type amount, size_type min_size, size_type max_size, size_type min_offset, size_type max_offset) {
     test_block *test_blocks = malloc(sizeof(test_block) * amount);
@@ -82,25 +84,19 @@ void allocate_page_size_segments() {
         free(readen_buffer);
     }
 
-    assert(check_equal(10, pager->allocated_pages_amount));
-
     for (int i = 0; i < 10; i += 2) {
         err = dispatcher_free(dispatcher, test_blocks[i].block);
         assert(check_equal(0, err));
     }
 
-    assert(check_equal(5, pager->allocated_pages_amount));
 
     for (int i = 10; i < 15; i++) {
-        VA block = test_blocks[i].block;
-        err = dispatcher_malloc(dispatcher, &block, 8);
+        err = dispatcher_malloc(dispatcher, &(test_blocks[i].block), 8);
         assert(check_equal(0, err));
 
         err = dispatcher_write(dispatcher, test_blocks[i].block, test_blocks[i].buffer, block_size);
         assert(check_equal(0, err));
     }
-
-    assert(check_equal(10, pager->allocated_pages_amount));
 
     for (int i = 10; i < 15; i++) {
         char *readen_buffer = malloc(sizeof(char) * block_size);
@@ -115,15 +111,14 @@ void allocate_page_size_segments() {
         err = dispatcher_free(dispatcher, test_blocks[i].block);
         assert(check_equal(0, err));
     }
-
-    assert(check_equal(5, pager->allocated_pages_amount));
+    free_dispatcher(dispatcher);
 }
 
 void write_more_then_page_segments() {
     assert(false);
 }
 
-void write_int_buffers() {
+void write_buffer_from_dispathcer_memmory() {
     assert(false);
 }
 
@@ -134,7 +129,7 @@ void use_more_memory_than_allocated() {
 int main() {
     allocate_page_size_segments();
     write_more_then_page_segments();
-    write_int_buffers();
+    write_buffer_from_dispathcer_memmory();
     use_more_memory_than_allocated();
     return 0;
 }

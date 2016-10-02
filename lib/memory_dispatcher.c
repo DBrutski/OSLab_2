@@ -5,6 +5,8 @@
 #include "memory_dispatcher.h"
 #include "segment.h"
 
+bool is_offset_in_range(memory_dispatcher *self, size_type offset);
+
 int dispatcher_malloc(memory_dispatcher *self, VA *ptr, size_type segment_size) {
     if (!check_enough_memory(self, segment_size)) { return NOT_ENOUGH_MEMORY_ERROR; }
     int err = allocate_memory(self, ptr, segment_size);
@@ -50,13 +52,19 @@ int dispatcher_write(memory_dispatcher *self, VA block, void *buffer_ptr, size_t
 
 int get_segment(memory_dispatcher *self, segment **segment_ptr, size_type *in_segment_offset, VA memory_offset) {
     size_type offset = (size_type) memory_offset;
-    if (!is_offset_in_range(self->pager, offset)) {
+    if (!is_offset_in_range(self, offset)) {
         return OUT_OF_RANGE_ERROR;
     };
     segment *current_segment = find_less_or_equal(self->segments, offset);
     *segment_ptr = current_segment;
     *in_segment_offset = offset - current_segment->segment_begin;
     return SUCCESSFUL_CODE;
+}
+
+bool is_offset_in_range(memory_dispatcher *self, size_type offset) {
+    segment *last_segment = map_last(self->segments);
+    return offset < 0 ||
+           offset >= last_segment->segment_begin + last_segment->pages_amount * self->page_size ? false : true;
 }
 
 int dispatcher_read(memory_dispatcher *self, VA ptr, void *buffer, size_type buffer_size) {
@@ -71,7 +79,7 @@ int dispatcher_read(memory_dispatcher *self, VA ptr, void *buffer, size_type buf
         return OUT_OF_RANGE_ERROR;
     }
 
-    err = pager_read(self->pager, segment, segment->segment_begin + segment_offset, (char *) buffer, buffer_size);
+    err = pager_read(self->pager, segment, segment_offset, (char *) buffer, buffer_size);
     return err;
 }
 
@@ -79,7 +87,7 @@ int dispatcher_free(memory_dispatcher *self, VA segment_ptr) {
     segment *freed_segment;
     size_type offset;
     int err = get_segment(self, &freed_segment, &offset, segment_ptr);
-    if (!err) {
+    if (err) {
         return err;
     }
     err = pager_free(self->pager, freed_segment);

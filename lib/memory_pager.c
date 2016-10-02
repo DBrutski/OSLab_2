@@ -105,10 +105,6 @@ bool is_memory_enought(memory_pager *self, size_type required_size) {
     return required_pages_amount <= queue_size(self->free_inmemory_pages) + queue_size(self->free_swap_pages);
 }
 
-bool is_offset_in_range(memory_pager *self, size_type offset) {
-    return offset < 0 || offset >= self->allocated_pages_amount * self->page_size ? false : true;
-}
-
 int pager_read(memory_pager *self, segment *current_segment, size_type in_segment_offset, char *buffer,
                size_type buffer_size) {
     size_type first_page = in_segment_offset >> self->page_offset_bits;
