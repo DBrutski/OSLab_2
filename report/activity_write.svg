@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg height="516" version="1.1" width="734" xmlns="http://www.w3.org/2000/svg">
+<line fill="#000000" stroke="#000000" stroke-width="1" x1="437" x2="437" y1="14" y2="502"/>
+<line fill="#000000" stroke="#000000" stroke-width="1" x1="62" x2="62" y1="14" y2="502"/>
+<line fill="#000000" stroke="#000000" stroke-width="1" x1="62" x2="437" y1="14" y2="14"/>
+<line fill="#000000" stroke="#000000" stroke-width="1" x1="62" x2="437" y1="502" y2="502"/>
+<text font-family="Dialog" font-size="12" x="192" y="27">
+MemoryDispatcher</text>
+<line fill="#000000" stroke="#000000" stroke-width="1" x1="62" x2="437" y1="39" y2="39"/>
+<line fill="#000000" stroke="#000000" stroke-width="1" x1="719" x2="719" y1="14" y2="502"/>
+<line fill="#000000" stroke="#000000" stroke-width="1" x1="438" x2="719" y1="14" y2="14"/>
+<line fill="#000000" stroke="#000000" stroke-width="1" x1="438" x2="719" y1="502" y2="502"/>
+<text font-family="Dialog" font-size="12" x="536" y="27">
+MemoryPager</text>
+<line fill="#000000" stroke="#000000" stroke-width="1" x1="438" x2="719" y1="39" y2="39"/>
+<ellipse cx="22" cy="62" fill="#000000" rx="8.0" ry="8.0" stroke="#000000" stroke-width="1"/>
+<polygon fill="#ffffff" points="110,46 126,62 110,78 94,62" stroke="#ffffff" stroke-width="1"/>
+<polygon fill="none" points="110,46 126,62 110,78 94,62" stroke="#000000" stroke-width="1"/>
+<polygon fill="#ffffff" points="110,278 126,294 110,310 94,294" stroke="#ffffff" stroke-width="1"/>
+<polygon fill="none" points="110,278 126,294 110,310 94,294" stroke="#000000" stroke-width="1"/>
+<ellipse cx="26" cy="294" fill="#000000" rx="12.0" ry="12.0" stroke="#000000" stroke-width="1"/>
+<ellipse cx="26" cy="294" fill="#ffffff" rx="11.0" ry="11.0" stroke="#ffffff" stroke-width="1"/>
+<ellipse cx="25" cy="293" fill="#000000" rx="7.5" ry="7.5" stroke="#000000" stroke-width="1"/>
+<polyline fill="none" points="30,62 94,62" stroke="#000000" stroke-width="1"/>
+<line fill="#000000" stroke="#000000" stroke-width="1" x1="82" x2="94" y1="69" y2="62"/>
+<line fill="#000000" stroke="#000000" stroke-width="1" x1="82" x2="94" y1="55" y2="62"/>
+<polyline fill="none" points="126,62 166,78" stroke="#000000" stroke-width="1"/>
+<line fill="#000000" stroke="#000000" stroke-width="1" x1="152" x2="166" y1="80" y2="78"/>
+<line fill="#000000" stroke="#000000" stroke-width="1" x1="157" x2="166" y1="67" y2="78"/>
+<text font-family="Dialog" font-size="12" x="133" y="60">
+[параметры валидные]</text>
+<polyline fill="none" points="94,294 38,294" stroke="#000000" stroke-width="1"/>
+<line fill="#000000" stroke="#000000" stroke-width="1" x1="50" x2="38" y1="287" y2="294"/>
+<line fill="#000000" stroke="#000000" stroke-width="1" x1="50" x2="38" y1="301" y2="294"/>
+<rect fill="#00ff" height="33" rx="35" ry="35" stroke="#00ff" stroke-width="1" width="124" x="167" y="79"/>
+<rect fill="#ffffff" height="35" rx="35" ry="35" stroke="#000000" stroke-width="1" width="126" x="166" y="78"/>
+<rect fill="#ffffff" height="33" rx="35" ry="35" stroke="#ffffff" stroke-width="1" width="124" x="167" y="79"/>
+<text font-family="Dialog" font-size="12" x="178" y="97">
+Найти сегмент</text>
+<polyline fill="none" points="110,78 110,278" stroke="#000000" stroke-width="1"/>
+<line fill="#000000" stroke="#000000" stroke-width="1" x1="103" x2="110" y1="266" y2="278"/>
+<line fill="#000000" stroke="#000000" stroke-width="1" x1="117" x2="110" y1="266" y2="278"/>
+<polygon fill="#ffffff" points="222,142 238,158 222,174 206,158" stroke="#ffffff" stroke-width="1"/>
+<polygon fill="none" points="222,142 238,158 222,174 206,158" stroke="#000000" stroke-width="1"/>
+<polyline fill="none" points="222,111 222,142" stroke="#000000" stroke-width="1"/>
+<line fill="#000000" stroke="#000000" stroke-width="1" x1="215" x2="222" y1="130" y2="142"/>
+<line fill="#000000" stroke="#000000" stroke-width="1" x1="229" x2="222" y1="130" y2="142"/>
+<rect fill="#00ff" height="48" rx="50" ry="50" stroke="#00ff" stroke-width="1" width="271" x="431" y="55"/>
+<rect fill="#ffffff" height="50" rx="50" ry="50" stroke="#000000" stroke-width="1" width="273" x="430" y="54"/>
+<rect fill="#ffffff" height="48" rx="50" ry="50" stroke="#ffffff" stroke-width="1" width="271" x="431" y="55"/>
+<text font-family="Dialog" font-size="12" x="442" y="73">
+page_num = offset &gt;&gt; log2(page_size);</text>
+<text font-family="Dialog" font-size="12" x="454" y="88">
+page_offset = offset | page_size - 1;</text>
+<polyline fill="none" points="238,158 431,102" stroke="#000000" stroke-width="1"/>
+<line fill="#000000" stroke="#000000" stroke-width="1" x1="421" x2="431" y1="112" y2="102"/>
+<line fill="#000000" stroke="#000000" stroke-width="1" x1="417" x2="431" y1="98" y2="102"/>
+<text font-family="Dialog" font-size="12" x="239" y="117">
+ [адрес - внешний]</text>
+<rect fill="#00ff" height="33" rx="35" ry="35" stroke="#00ff" stroke-width="1" width="219" x="167" y="231"/>
+<rect fill="#ffffff" height="35" rx="35" ry="35" stroke="#000000" stroke-width="1" width="221" x="166" y="230"/>
+<rect fill="#ffffff" height="33" rx="35" ry="35" stroke="#ffffff" stroke-width="1" width="219" x="167" y="231"/>
+<text font-family="Dialog" font-size="12" x="178" y="249">
+Считать во временный буфер</text>
+<polyline fill="none" points="222,174 222,231" stroke="#000000" stroke-width="1"/>
+<line fill="#000000" stroke="#000000" stroke-width="1" x1="215" x2="222" y1="219" y2="231"/>
+<line fill="#000000" stroke="#000000" stroke-width="1" x1="229" x2="222" y1="219" y2="231"/>
+<text font-family="Dialog" font-size="12" x="212" y="202">
+ [адрес - внутренний]</text>
+<polyline fill="none" points="385,231 431,102" stroke="#000000" stroke-width="1"/>
+<line fill="#000000" stroke="#000000" stroke-width="1" x1="433" x2="431" y1="115" y2="102"/>
+<line fill="#000000" stroke="#000000" stroke-width="1" x1="420" x2="431" y1="110" y2="102"/>
+<polygon fill="#ffffff" points="510,198 526,214 510,230 494,214" stroke="#ffffff" stroke-width="1"/>
+<polygon fill="none" points="510,198 526,214 510,230 494,214" stroke="#000000" stroke-width="1"/>
+<rect fill="#00ff" height="33" rx="35" ry="35" stroke="#00ff" stroke-width="1" width="156" x="543" y="239"/>
+<rect fill="#ffffff" height="35" rx="35" ry="35" stroke="#000000" stroke-width="1" width="158" x="542" y="238"/>
+<rect fill="#ffffff" height="33" rx="35" ry="35" stroke="#ffffff" stroke-width="1" width="156" x="543" y="239"/>
+<text font-family="Dialog" font-size="12" x="554" y="257">
+загрузить страницу</text>
+<polyline fill="none" points="526,214 543,239" stroke="#000000" stroke-width="1"/>
+<line fill="#000000" stroke="#000000" stroke-width="1" x1="530" x2="543" y1="233" y2="239"/>
+<line fill="#000000" stroke="#000000" stroke-width="1" x1="542" x2="543" y1="225" y2="239"/>
+<text font-family="Dialog" font-size="12" x="536" y="220">
+ [не в памяти]</text>
+<rect fill="#00ff" height="33" rx="35" ry="35" stroke="#00ff" stroke-width="1" width="179" x="463" y="343"/>
+<rect fill="#ffffff" height="35" rx="35" ry="35" stroke="#000000" stroke-width="1" width="181" x="462" y="342"/>
+<rect fill="#ffffff" height="33" rx="35" ry="35" stroke="#ffffff" stroke-width="1" width="179" x="463" y="343"/>
+<text font-family="Dialog" font-size="12" x="474" y="361">
+записать часть буфера</text>
+<polyline fill="none" points="510,230 510,278" stroke="#000000" stroke-width="1"/>
+<line fill="#000000" stroke="#000000" stroke-width="1" x1="503" x2="510" y1="266" y2="278"/>
+<line fill="#000000" stroke="#000000" stroke-width="1" x1="517" x2="510" y1="266" y2="278"/>
+<polyline fill="none" points="543,271 523,291" stroke="#000000" stroke-width="1"/>
+<line fill="#000000" stroke="#000000" stroke-width="1" x1="526" x2="523" y1="277" y2="291"/>
+<line fill="#000000" stroke="#000000" stroke-width="1" x1="536" x2="523" y1="287" y2="291"/>
+<rect fill="#00ff" height="48" rx="50" ry="50" stroke="#00ff" stroke-width="1" width="126" x="479" y="423"/>
+<rect fill="#ffffff" height="50" rx="50" ry="50" stroke="#000000" stroke-width="1" width="128" x="478" y="422"/>
+<rect fill="#ffffff" height="48" rx="50" ry="50" stroke="#ffffff" stroke-width="1" width="126" x="479" y="423"/>
+<text font-family="Dialog" font-size="12" x="497" y="441">
+page_num++;</text>
+<text font-family="Dialog" font-size="12" x="490" y="456">
+page_offset = 0;</text>
+<polyline fill="none" points="542,375 542,423" stroke="#000000" stroke-width="1"/>
+<line fill="#000000" stroke="#000000" stroke-width="1" x1="535" x2="542" y1="411" y2="423"/>
+<line fill="#000000" stroke="#000000" stroke-width="1" x1="549" x2="542" y1="411" y2="423"/>
+<polygon fill="#ffffff" points="510,126 526,142 510,158 494,142" stroke="#ffffff" stroke-width="1"/>
+<polygon fill="none" points="510,126 526,142 510,158 494,142" stroke="#000000" stroke-width="1"/>
+<polyline fill="none" points="510,102 510,126" stroke="#000000" stroke-width="1"/>
+<line fill="#000000" stroke="#000000" stroke-width="1" x1="503" x2="510" y1="114" y2="126"/>
+<line fill="#000000" stroke="#000000" stroke-width="1" x1="517" x2="510" y1="114" y2="126"/>
+<polyline fill="none" points="510,158 510,198" stroke="#000000" stroke-width="1"/>
+<line fill="#000000" stroke="#000000" stroke-width="1" x1="503" x2="510" y1="186" y2="198"/>
+<line fill="#000000" stroke="#000000" stroke-width="1" x1="517" x2="510" y1="186" y2="198"/>
+<text font-family="Dialog" font-size="12" x="513" y="175">
+ [буфер не закончился]</text>
+<polyline fill="none" points="604,423 710,374 710,142 526,142" stroke="#000000" stroke-width="1"/>
+<line fill="#000000" stroke="#000000" stroke-width="1" x1="538" x2="526" y1="135" y2="142"/>
+<line fill="#000000" stroke="#000000" stroke-width="1" x1="538" x2="526" y1="149" y2="142"/>
+<polyline fill="none" points="510,158 398,294 126,294" stroke="#000000" stroke-width="1"/>
+<line fill="#000000" stroke="#000000" stroke-width="1" x1="138" x2="126" y1="287" y2="294"/>
+<line fill="#000000" stroke="#000000" stroke-width="1" x1="138" x2="126" y1="301" y2="294"/>
+<polygon fill="#ffffff" points="510,278 526,294 510,310 494,294" stroke="#ffffff" stroke-width="1"/>
+<polygon fill="none" points="510,278 526,294 510,310 494,294" stroke="#000000" stroke-width="1"/>
+<polyline fill="none" points="510,310 510,343" stroke="#000000" stroke-width="1"/>
+<line fill="#000000" stroke="#000000" stroke-width="1" x1="503" x2="510" y1="331" y2="343"/>
+<line fill="#000000" stroke="#000000" stroke-width="1" x1="517" x2="510" y1="331" y2="343"/>
+</svg>

@@ -89,8 +89,6 @@ int pager_write(memory_pager *self, segment *current_segment, size_type in_segme
     size_type first_page = in_segment_oofset >> self->page_offset_bits;
     size_type require_pages_amount = get_required_pages_amount(self, buffer_size);
 
-    load_required_pages(self, first_page, require_pages_amount);
-
     size_type first_page_offset = in_segment_oofset & self->page_offset_mask;
 
     size_type page_offset = first_page_offset;
