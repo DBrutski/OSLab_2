@@ -119,7 +119,7 @@ memory_dispatcher *create_memory_dispatcher(size_type page_amount, size_type pag
     memory_dispatcher *dispatcher = (memory_dispatcher *) malloc(sizeof(memory_dispatcher));
     dispatcher->page_size = page_size;
     dispatcher->segments = create_map();
-    dispatcher->pager = create_memory_pager(page_size, page_amount, 0);
+    dispatcher->pager = create_memory_pager(page_size, page_amount, page_amount);
     return dispatcher;
 }
 

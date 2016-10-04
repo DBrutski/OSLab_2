@@ -87,7 +87,6 @@ void init_pages_offset(memory_pager *self, size_type page_size) {
 int pager_write(memory_pager *self, segment *current_segment, size_type in_segment_oofset, char *buffer,
                 size_type buffer_size) {
     size_type first_page = in_segment_oofset >> self->page_offset_bits;
-    size_type require_pages_amount = get_required_pages_amount(self, buffer_size);
 
     size_type first_page_offset = in_segment_oofset & self->page_offset_mask;
 
@@ -175,7 +174,7 @@ int pager_free(memory_pager *self, segment *freed_segment) {
          pages_it < freed_segment->pages + freed_segment->pages_amount; pages_it++) {
         if ((*pages_it)->is_in_memmory) {
             queue_push(self->free_in_memory_pages, *pages_it);
-            queue_remove(self->pages_to_pump_out, pages_it);
+            queue_remove(self->pages_to_pump_out, *pages_it);
         } else {
             free_external_page(self->out_pager, *pages_it);
         }

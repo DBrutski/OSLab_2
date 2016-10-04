@@ -38,7 +38,23 @@ void unit_test_queue_with_bigger_pages() {
     free_queue(tested_queue);
 }
 
+void unit_test_queue_remove() {
+    page *page1 = create_page(0, true);
+    page *page2 = create_page(16, true);
+    page *page3 = create_page(32, true);
+    queue *tested_queue = create_queue();
+    queue_push(tested_queue, page1);
+    queue_push(tested_queue, page2);
+    queue_push(tested_queue, page3);
+    queue_remove(tested_queue, page2);
+    queue_remove(tested_queue, page1);
+    queue_remove(tested_queue, page3);
+    queue_remove(tested_queue, page2);
+    free_queue(tested_queue);
+}
+
 int main() {
     unit_test_queue_pages();
     unit_test_queue_with_bigger_pages();
+    unit_test_queue_remove();
 }

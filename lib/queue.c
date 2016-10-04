@@ -28,8 +28,9 @@ void queue_push(queue *self, page *new_page) {
 
 
 void queue_remove(queue *self, page *removing_page) {
-    queue_node *node = self->first;
-    while (node != NULL && node->data != removing_page) {
+    queue_node *node = self->last;
+    while (node != NULL && (node->data->offset != removing_page->offset ||
+           node->data->is_in_memmory != removing_page->is_in_memmory)) {
         node = node->next_p;
     }
     if (node == NULL) {

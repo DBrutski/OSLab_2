@@ -17,7 +17,7 @@ int _read(VA ptr, void *buffer_ptr, size_type buffer_size) {
 }
 
 
-int _write(VA ptr, void *buffer_ptr, size_type buffer_size) {
+int ___write(VA ptr, void *buffer_ptr, size_type buffer_size) {
     return dispatcher_write(dispatcher, ptr, buffer_ptr, buffer_size);
 }
 
@@ -25,7 +25,7 @@ boolean isPowOfTwo(size_type number) {
     return !(number & (number - 1));
 }
 
-int _init(int n, size_type szPage) {
+int ___init(int n, size_type szPage) {
     if (dispatcher != NULL) {
         free_dispatcher(dispatcher);
     }
