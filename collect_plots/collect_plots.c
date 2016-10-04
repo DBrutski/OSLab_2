@@ -74,8 +74,7 @@ void get_plot_internal_write_plot(int point_amount, int page_amount, int page_si
         blocks[i] = block;
         free(test_buffer);
     }
-    int end = point_amount / 2;
-    for (int i = 0; i < end; i++) {
+    for (int i = 0; i < point_amount; i++) {
         unsigned long start = clock();
         for (int j = 0; j < 1000; j++) {
             ___write(blocks[i], blocks[point_amount - i - 1], block_size);
@@ -103,8 +102,7 @@ void get_plot_read_plot(int point_amount, int page_amount, int page_size, int bl
         blocks[i] = block;
         free(test_buffer);
     }
-    int end = point_amount / 2;
-    for (int i = 0; i < end; i++) {
+    for (int i = 0; i < point_amount; i++) {
         char *test_buffer = (char *) malloc(sizeof(char) * block_size);
         unsigned long start = clock();
         for (int j = 0; j < 1000; j++) {
@@ -129,9 +127,16 @@ int main() {
     for (int i = 0; i < 32; i++) {
         int block_size = (i & block_size_mask) >> 2;
         int page_size = i & page_size_mask;
-        int pages_amount = 1 << ((1 & pages_amount_mask) >> 4);
-        get_plot_read_plot(200, 200 * sizes[block_size] / sizes[page_size] * pages_amount, sizes[page_size],
+        int pages_amount = 1 << ((i & pages_amount_mask) >> 4);
+        if (page_size > block_size) {
+            continue;
+        }
+//        get_plot_internal_write_plot(200, 200 * sizes[block_size] / sizes[page_size] * pages_amount, sizes[page_size],
+//                                     sizes[block_size]);
+        get_plot_write_plot(200, 200 * sizes[block_size] / sizes[page_size] * pages_amount, sizes[page_size],
                                      sizes[block_size]);
+//        get_plot_read_plot(200, 200 * sizes[block_size] / sizes[page_size] * pages_amount, sizes[page_size],
+//                           sizes[block_size]);
     }
     return 0;
 }
