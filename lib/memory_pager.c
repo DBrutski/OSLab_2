@@ -177,6 +177,7 @@ int pager_free(memory_pager *self, segment *freed_segment) {
          pages_it < freed_segment->pages + freed_segment->pages_amount; pages_it++) {
         if ((*pages_it)->is_in_memmory) {
             queue_push(self->free_in_memory_pages, *pages_it);
+            queue_remove(self->pages_to_pump_out, pages_it);
         } else {
             free_external_page(self->out_pager, *pages_it);
         }

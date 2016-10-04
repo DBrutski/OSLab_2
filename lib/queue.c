@@ -26,6 +26,31 @@ void queue_push(queue *self, page *new_page) {
     self->size++;
 }
 
+
+void queue_remove(queue *self, page *removing_page) {
+    queue_node *node = self->first;
+    while (node != NULL && node->data != removing_page) {
+        node = node->next_p;
+    }
+    if (node == NULL) {
+        return;
+    }
+    if (node->data == removing_page) {
+        if (node->previos_p == NULL) {
+            self->first = node->next_p;
+        } else {
+            node->previos_p->next_p = node->next_p;
+        }
+        if (node->next_p == NULL) {
+            self->last = node->previos_p;
+        } else {
+            node->next_p->previos_p = node->previos_p;
+        }
+        self->size--;
+        free(node);
+    }
+}
+
 page *queue_pop(queue *self) {
     if (self->first == NULL) {
         return NULL;

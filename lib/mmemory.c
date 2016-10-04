@@ -1,4 +1,4 @@
-#include <jmorecfg.h>
+
 #include "mmemory.h"
 #include "memory_dispatcher.h"
 
@@ -26,6 +26,9 @@ boolean isPowOfTwo(size_type number) {
 }
 
 int _init(int n, size_type szPage) {
+    if (dispatcher != NULL) {
+        free_dispatcher(dispatcher);
+    }
     if (n <= 0 || szPage <= 0) {
         return INCORRECT_PARAMETERS_ERROR;
     }

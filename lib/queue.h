@@ -30,6 +30,8 @@ void queue_push(queue *self, page *new_page);
 
 page *queue_pop(queue *self);
 
+void queue_remove(queue *self, page *removing_page);
+
 size_type queue_size(queue *self);
 
 #endif //NEIRONS_NETWORK_QUEUE_H

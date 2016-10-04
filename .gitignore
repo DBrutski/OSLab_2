@@ -4,3 +4,6 @@
 *MakeFile*
 *CMakeCache*
 *.a
+complex_tests/complex-test
+queue_test/queue-test
+test_paging/test_paging
