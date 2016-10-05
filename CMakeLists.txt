@@ -12,4 +12,5 @@ add_subdirectory(queue_test)
 #add_subdirectory(tests_on_c)
 add_subdirectory(test_paging)
 add_subdirectory(collect_plots)
+add_subdirectory(final_tests)
 

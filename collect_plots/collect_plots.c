@@ -32,7 +32,7 @@ void get_plot_write_plot(int point_amount, int page_amount, int page_size, int b
         _malloc(&block, block_size);
         unsigned long start = clock();
         for (int j = 0; j < 1000; j++) {
-            ___write(block, test_buffer, block_size);
+            _write(block, test_buffer, block_size);
         }
         unsigned long end = clock();
         points[i].x = i;
@@ -77,7 +77,7 @@ void get_plot_internal_write_plot(int point_amount, int page_amount, int page_si
     for (int i = 0; i < point_amount; i++) {
         unsigned long start = clock();
         for (int j = 0; j < 1000; j++) {
-            ___write(blocks[i], blocks[point_amount - i - 1], block_size);
+            _write(blocks[i], blocks[point_amount - i - 1], block_size);
         }
         unsigned long end = clock();
         points[i].x = i;
@@ -98,7 +98,7 @@ void get_plot_read_plot(int point_amount, int page_amount, int page_size, int bl
         VA block;
         char *test_buffer = (char *) malloc(sizeof(char) * block_size);
         _malloc(&block, block_size);
-        ___write(blocks[i], blocks[point_amount - i - 1], block_size);
+        _write(blocks[i], blocks[point_amount - i - 1], block_size);
         blocks[i] = block;
         free(test_buffer);
     }

@@ -10,3 +10,4 @@ test_paging/test_paging
 *~
 *.out*
 *.make
+report/

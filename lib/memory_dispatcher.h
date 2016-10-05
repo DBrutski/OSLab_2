@@ -46,5 +46,9 @@ int dispatcher_read(memory_dispatcher *self, VA ptr, void *buffer, size_type buf
 
 int dispatcher_free(memory_dispatcher *self, VA segment_ptr);
 
+bool is_offset_in_range(memory_dispatcher *self, size_type offset);
+
+bool is_ptr_dispatchers_addres_aria(memory_dispatcher *self, void *ptr);
+
 
 #endif //NEIRONS_NETWORK_MEMMORY_DISPATCHER_H

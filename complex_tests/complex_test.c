@@ -15,7 +15,7 @@ typedef struct {
     size_type offset;
 } test_block;
 
-void write_buffer_from_dispatcher_memmory();
+void internal_write_buffer_from_dispatcher_memmory();
 
 memory_dispatcher *
 init_manager_with_paging(size_type inmemmory_pages_amount, size_type outmemmory_pages_ammount, size_type page_size) {
@@ -83,7 +83,6 @@ void test_free_function_on_page_size_blocks() {
         test_block *current_block = &test_blocks[i];
         err = dispatcher_malloc(dispatcher, &(current_block->block), 8);
         assert(check_equal(0, err));
-
     }
 
     for (int i = 0; i < 10; i++) {
@@ -203,7 +202,7 @@ void test_work_with_buffer_more_then_page_size_and_write_to_random_place() {
     free_dispatcher(dispatcher);
 }
 
-void write_buffer_from_dispatcher_memmory() {
+void internal_write_buffer_from_dispatcher_memmory() {
     size_type block_size = 16;
     size_type buffer_size = 9;
 
@@ -418,7 +417,7 @@ void test_page_size_paging() {
 int main() {
     test_free_function_on_page_size_blocks();
     test_work_with_buffer_more_then_page_size_and_write_to_random_place();
-    write_buffer_from_dispatcher_memmory();
+    internal_write_buffer_from_dispatcher_memmory();
     test_page_size_paging();
     use_more_memory_than_allocated();
     return 0;

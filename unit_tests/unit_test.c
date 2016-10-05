@@ -94,7 +94,7 @@ void unit_test_write_buffer_to_one_page() {
     free_dispatcher(dispatcher);
 }
 
-void unit_test_write_buffer_to_page_not_in_begin() {
+void unit_test_write_buffer_to_segment_not_in_begin() {
     memory_dispatcher *dispatcher = init_manager(5, 16);
     memory_pager *pager = dispatcher->pager;
     assert(check_equal(5, pager->allocated_pages_amount));
@@ -198,7 +198,7 @@ int main() {
     unit_test_malloc_block();
     unit_test_malloc_block_two_blocks();
     unit_test_write_buffer_to_one_page();
-    unit_test_write_buffer_to_page_not_in_begin();
+    unit_test_write_buffer_to_segment_not_in_begin();
     unit_test_read_buffer_from_two_page_not_in_begin();
     unit_test_write_buffer_to_two_page_not_in_begin();
     unit_test_read_buffer_from_one_page();

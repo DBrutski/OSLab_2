@@ -6,9 +6,7 @@
 #include "segment.h"
 #include "external_pager.h"
 
-bool is_offset_in_range(memory_dispatcher *self, size_type offset);
 
-bool is_ptr_dispatchers_addres_aria(memory_dispatcher *self, void *ptr);
 
 int dispatcher_malloc(memory_dispatcher *self, VA *ptr, size_type segment_size) {
     if (!check_enough_memory(self, segment_size)) { return NOT_ENOUGH_MEMORY_ERROR; }
