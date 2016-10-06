@@ -6,7 +6,6 @@
 #define NEIRONS_NETWORK_QUEUE_H
 
 #include "mmemory.h"
-#include "map.h"
 #include "page.h"
 
 typedef struct queue_node{

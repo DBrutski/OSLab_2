@@ -7,7 +7,7 @@
 #include "mmemory.h"
 #include "segment.h"
 #include "memory_pager.h"
-#include "map.h"
+#include "memory_address.h"
 
 #define SUCCESSFUL_CODE  0;
 #define INCORRECT_PARAMETERS_ERROR -1;
@@ -17,16 +17,25 @@
 
 typedef struct {
 
-    map *segments;
+    segment **segments;
     memory_pager *pager;
 
     int page_size;
 } memory_dispatcher;
 
-void free_dispatcher(memory_dispatcher *dispatcher);
+static unsigned long page_offset_mask;
 
-memory_dispatcher *
-create_memory_dispatcher_with_paging(size_type page_amount, size_type page_size, size_type pages_amount_in_paging_aria);
+static unsigned long page_num_first_bit;
+
+static const long segment_num_mask = 0xffff00000000;
+
+static const int segment_first_bit = 32;
+
+static const unsigned int segment_offset_mask = 0xffffffff;
+
+static const unsigned long internal_memory_bit = 0x8000000000000000;
+
+void free_dispatcher(memory_dispatcher *dispatcher);
 
 memory_dispatcher *create_memory_dispatcher(size_type page_amount, size_type page_size);
 
@@ -34,21 +43,21 @@ int dispatcher_malloc(memory_dispatcher *self, VA *ptr, size_type segment_size);
 
 bool check_enough_memory(memory_dispatcher *self, size_type required_size);
 
-int allocate_memory(memory_dispatcher *self, VA *ptr, size_type segment_size);
-
-segment * create_new_segment(memory_dispatcher *self, size_type segment_size);
-
 int dispatcher_write(memory_dispatcher *self, VA block, void *buffer_ptr, size_type buffer_size);
 
-int get_segment(memory_dispatcher *self, segment **segment_ptr, size_type *in_segment_offset, VA memory_offset);
+int get_segment(memory_dispatcher *self, memory_address *address, VA memory_offset);
 
 int dispatcher_read(memory_dispatcher *self, VA ptr, void *buffer, size_type buffer_size);
 
 int dispatcher_free(memory_dispatcher *self, VA segment_ptr);
 
-bool is_offset_in_range(memory_dispatcher *self, size_type offset);
+bool is_offset_in_range(memory_dispatcher *self, memory_address *address);
 
-bool is_ptr_dispatchers_addres_aria(memory_dispatcher *self, void *ptr);
+bool is_ptr_dispatchers_address_aria(void *ptr);
 
+memory_address get_memory_address(VA virtual_address);
 
+VA get_virtual_address(memory_address *address);
+
+void init_pages_offset(size_type page_size);
 #endif //NEIRONS_NETWORK_MEMMORY_DISPATCHER_H

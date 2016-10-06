@@ -70,7 +70,7 @@
        <UML:Classifier.feature>
         <UML:Attribute visibility="public" isSpecification="false" xmi.id="JkzxgURWY05U" type="qnWBMFyjRzxl" name="key"/>
         <UML:Attribute visibility="public" isSpecification="false" xmi.id="Ch7OQwUjhSfL" type="u6qT4vvtiR45" comment="&#x9;" name="data"/>
-        <UML:Operation visibility="public" isSpecification="false" isQuery="false" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="7OpbGhko9Vf5" name="find_less_or_equal">
+        <UML:Operation visibility="public" isSpecification="false" isQuery="false" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="7OpbGhko9Vf5" name="get">
          <UML:BehavioralFeature.parameter>
           <UML:Parameter kind="return" xmi.id="95l5ZthVy5F0" type="u6qT4vvtiR45"/>
           <UML:Parameter visibility="private" isSpecification="false" xmi.id="3KjVhTzlpxoP" type="qnWBMFyjRzxl" value="" name="key"/>

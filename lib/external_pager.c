@@ -3,9 +3,8 @@
 //
 
 #include <string.h>
+#include <stdlib.h>
 #include "external_pager.h"
-#include "memory_pager.h"
-#include "page.h"
 
 queue *create_external_pages_pull(memory_pager *self, size_type pages_amount, size_type page_size);
 
@@ -13,7 +12,6 @@ memory_pager *create_external_pager(size_type pages_amount, size_type page_size)
     memory_pager *pager = (memory_pager *) malloc(sizeof(memory_pager));
     pager->allocated_memory = (char *) malloc(sizeof(char) * pages_amount * page_size);
     pager->page_size = page_size;
-    init_pages_offset(pager, page_size);
     pager->allocated_pages_amount = pages_amount;
     pager->free_in_memory_pages = create_external_pages_pull(pager, pages_amount, page_size);
     pager->out_pager = NULL;

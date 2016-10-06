@@ -3,6 +3,7 @@
 //
 
 #include "queue.h"
+#include <stdlib.h>
 
 queue *create_queue() {
     queue *out_queue = (queue *) malloc(sizeof(queue));
@@ -38,12 +39,12 @@ void queue_remove(queue *self, page *removing_page) {
     }
     if (node->data == removing_page) {
         if (node->previos_p == NULL) {
-            self->first = node->next_p;
+            self->last = node->next_p;
         } else {
             node->previos_p->next_p = node->next_p;
         }
         if (node->next_p == NULL) {
-            self->last = node->previos_p;
+            self->first = node->previos_p;
         } else {
             node->next_p->previos_p = node->previos_p;
         }

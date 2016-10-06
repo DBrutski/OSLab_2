@@ -3,10 +3,6 @@
 #include "memory_dispatcher.h"
 #include <stdio.h>
 
-memory_dispatcher *init_manager(size_type n, size_type pageSize) {
-    return create_memory_dispatcher(n, pageSize);
-}
-
 typedef struct {
     VA block;
     size_type block_size;
@@ -16,13 +12,6 @@ typedef struct {
 } test_block;
 
 void internal_write_buffer_from_dispatcher_memmory();
-
-memory_dispatcher *
-init_manager_with_paging(size_type inmemmory_pages_amount, size_type outmemmory_pages_ammount, size_type page_size) {
-    memory_dispatcher *dispatcher = create_memory_dispatcher_with_paging(inmemmory_pages_amount, page_size,
-                                                                         outmemmory_pages_ammount);
-    return dispatcher;
-}
 
 test_block *
 init_test_blocks(size_type amount, size_type min_block_size, size_type max_block_size, size_type min_offset,
@@ -75,7 +64,7 @@ bool check_equal_collection(char *begin_l, char *end_l, char *begin_r, char *end
 void test_free_function_on_page_size_blocks() {
     size_type block_size = 8;
 
-    memory_dispatcher *dispatcher = init_manager(10, 8);
+    memory_dispatcher *dispatcher = create_memory_dispatcher(10, 8);
     test_block *test_blocks = init_test_blocks(20, block_size, block_size, 0, 0, 0, 0);
 
     int err;
@@ -140,7 +129,7 @@ void test_work_with_buffer_more_then_page_size_and_write_to_random_place() {
     size_type block_size = 16;
     size_type buffer_size = 9;
 
-    memory_dispatcher *dispatcher = init_manager(20, 8);
+    memory_dispatcher *dispatcher = create_memory_dispatcher(20, 8);
     test_block *test_blocks = init_test_blocks(20, block_size, block_size, 1, 3, buffer_size, buffer_size);
 
     int err;
@@ -206,7 +195,7 @@ void internal_write_buffer_from_dispatcher_memmory() {
     size_type block_size = 16;
     size_type buffer_size = 9;
 
-    memory_dispatcher *dispatcher = init_manager(20, 8);
+    memory_dispatcher *dispatcher = create_memory_dispatcher(20, 8);
     test_block *test_blocks = init_test_blocks(10, block_size, block_size, 1, 3, buffer_size, buffer_size);
 
     int err;
@@ -250,15 +239,12 @@ void internal_write_buffer_from_dispatcher_memmory() {
 }
 
 void check_corect_write(memory_dispatcher *dispatcher, test_block *current_block) {
-    segment *current_segment;
-    size_type offset;
-    get_segment(dispatcher, &current_segment, &offset, current_block->block);
-    offset = current_block->offset;
-    size_type page_number_offset = dispatcher->pager->page_offset_bits;
-    size_type page_offset_mask = dispatcher->pager->page_offset_mask;
-    size_type in_page_offset = offset & page_offset_mask;
+    memory_address address;
+    get_segment(dispatcher, &address, current_block->block + current_block->offset);
+    size_type in_page_offset = address.page_offset;
     char *expected_buffer = current_block->buffer;
-    for (int i = offset >> page_number_offset;
+    segment *current_segment = dispatcher->segments[address.segment_num];
+    for (int i = address.page_num;
          i < current_segment->pages_amount && expected_buffer < expected_buffer + current_block->buffer_size; i++) {
         page *current_page = current_segment->pages[i];
         char *saved_page_buffer;
@@ -279,12 +265,12 @@ void check_corect_write(memory_dispatcher *dispatcher, test_block *current_block
     }
 }
 
-void use_more_memory_than_allocated() {
+void test_paging() {
     const size_type block_size = 8;
     const size_type buffer_size = 4;
     const size_type segments_amount = 5;
 
-    memory_dispatcher *dispatcher = init_manager_with_paging(4, 6, 4);
+    memory_dispatcher *dispatcher = create_memory_dispatcher(10, 4);
     test_block *test_blocks = init_test_blocks(segments_amount, block_size, block_size, 1, 3, buffer_size, buffer_size);
 
     int err;
@@ -315,110 +301,11 @@ void use_more_memory_than_allocated() {
     free_dispatcher(dispatcher);
 }
 
-void test_page_size_paging() {
-    const size_type block_size = 8;
-    const size_type buffer_size = 8;
-    const size_type segments_amount = 4;
-
-    memory_dispatcher *dispatcher = init_manager_with_paging(4, 4, 4);
-    test_block *test_blocks = init_test_blocks(segments_amount, block_size, block_size, 0, 0, buffer_size, buffer_size);
-
-    int err;
-    {
-        test_block *current_block = &test_blocks[0];
-        err = dispatcher_malloc(dispatcher, &(current_block->block), current_block->block_size);
-        assert(check_equal(0, err));
-
-        err = dispatcher_write(dispatcher, current_block->block + current_block->offset, current_block->buffer,
-                               current_block->buffer_size);
-        assert(check_equal(0, err));
-    }
-
-    {
-        test_block *current_block = &test_blocks[1];
-        err = dispatcher_malloc(dispatcher, &(current_block->block), current_block->block_size);
-        assert(check_equal(0, err));
-
-        err = dispatcher_write(dispatcher, current_block->block + current_block->offset, current_block->buffer,
-                               current_block->buffer_size);
-        assert(check_equal(0, err));
-    }
-
-    {
-        test_block *current_block = &test_blocks[2];
-        err = dispatcher_malloc(dispatcher, &(current_block->block), current_block->block_size);
-        assert(check_equal(0, err));
-
-        err = dispatcher_write(dispatcher, current_block->block + current_block->offset, current_block->buffer,
-                               current_block->buffer_size);
-        assert(check_equal(0, err));
-    }
-
-    {
-        test_block *current_block = &test_blocks[3];
-        err = dispatcher_malloc(dispatcher, &(current_block->block), current_block->block_size);
-        assert(check_equal(0, err));
-
-        err = dispatcher_write(dispatcher, current_block->block + current_block->offset, current_block->buffer,
-                               current_block->buffer_size);
-        assert(check_equal(0, err));
-    }
-
-    {
-        test_block *current_block = &test_blocks[0];
-        char *readen_buffer = malloc(sizeof(char) * current_block->buffer_size);
-        err = dispatcher_read(dispatcher, current_block->block + current_block->offset,
-                              readen_buffer, current_block->buffer_size);
-        assert(check_equal(0, err));
-
-        assert(check_equal_collection(current_block->buffer, current_block->buffer + current_block->buffer_size,
-                                      readen_buffer, readen_buffer + current_block->buffer_size));
-        free(readen_buffer);
-    }
-
-    {
-        test_block *current_block = &test_blocks[1];
-        char *readen_buffer = malloc(sizeof(char) * current_block->buffer_size);
-        err = dispatcher_read(dispatcher, current_block->block + current_block->offset,
-                              readen_buffer, current_block->buffer_size);
-        assert(check_equal(0, err));
-
-        assert(check_equal_collection(current_block->buffer, current_block->buffer + current_block->buffer_size,
-                                      readen_buffer, readen_buffer + current_block->buffer_size));
-        free(readen_buffer);
-    }
-
-    {
-        test_block *current_block = &test_blocks[2];
-        char *readen_buffer = malloc(sizeof(char) * current_block->buffer_size);
-        err = dispatcher_read(dispatcher, current_block->block + current_block->offset,
-                              readen_buffer, current_block->buffer_size);
-        assert(check_equal(0, err));
-
-        assert(check_equal_collection(current_block->buffer, current_block->buffer + current_block->buffer_size,
-                                      readen_buffer, readen_buffer + current_block->buffer_size));
-        free(readen_buffer);
-    }
-
-    {
-        test_block *current_block = &test_blocks[3];
-        char *readen_buffer = malloc(sizeof(char) * current_block->buffer_size);
-        err = dispatcher_read(dispatcher, current_block->block + current_block->offset,
-                              readen_buffer, current_block->buffer_size);
-        assert(check_equal(0, err));
-
-        assert(check_equal_collection(current_block->buffer, current_block->buffer + current_block->buffer_size,
-                                      readen_buffer, readen_buffer + current_block->buffer_size));
-        free(readen_buffer);
-    }
-    free_dispatcher(dispatcher);
-}
-
 int main() {
     test_free_function_on_page_size_blocks();
     test_work_with_buffer_more_then_page_size_and_write_to_random_place();
     internal_write_buffer_from_dispatcher_memmory();
-    test_page_size_paging();
-    use_more_memory_than_allocated();
+    test_paging();
+    printf("all correct");
     return 0;
 }

@@ -5,22 +5,15 @@
 #ifndef NEIRONS_NETWORK_PAGER_H
 #define NEIRONS_NETWORK_PAGER_H
 
-
-static const int TO_BE_ON_THE_SAFE_SIDE = 1;
-
-#include <jmorecfg.h>
 #include "page.h"
 #include "segment.h"
 #include "mmemory.h"
 #include "queue.h"
+#include "memory_address.h"
 
 typedef struct memory_pager{
     size_type allocated_pages_amount;
     char *allocated_memory;
-
-
-    size_type page_offset_mask;
-    size_type page_offset_bits;
 
     queue *free_in_memory_pages;
     queue *pages_to_pump_out;
@@ -35,22 +28,19 @@ memory_pager *create_memory_pager(size_type page_size, size_type in_memory_pages
 
 void free_pager(memory_pager *pager);
 
-queue *create_inmemory_pages_pull(memory_pager *self, size_type pages_amount,
-                                  size_type page_size);
+queue *create_inmemory_pages_pull(size_type pages_amount, size_type page_size);
 
 segment *pager_malloc(memory_pager *self, size_type virtual_offset, size_type requred_size);
 
-int pager_write(memory_pager *self, segment *current_segment, size_type in_segment_oofset, char *buffer,
+int pager_write(memory_pager *self, segment *current_segment, memory_address *address, char *buffer,
                 size_type buffer_size);
 
-int pager_read(memory_pager *self, segment *current_segment, size_type in_segment_offset, char *buffer,
+int pager_read(memory_pager *self, segment *current_segment, memory_address *address, char *buffer,
                size_type buffer_size);
 
 int pager_free(memory_pager *self, segment *freed_segment);
 
 size_type get_required_pages_amount(memory_pager *self, int required_size);
-
-void init_pages_offset(memory_pager *self, size_type page_size);
 
 
 void load_required_pages(memory_pager *self, size_type first_page, size_type required_pages_amount);

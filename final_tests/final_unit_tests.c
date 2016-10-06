@@ -6,7 +6,7 @@
 #include <stdio.h>
 
 char *generateBuffer(int size) {
-    char *buffer = (char *) malloc(sizeof(size));
+    char *buffer = (char *) malloc(sizeof(char) * size);
     for (int i = 0; i < size; i++) {
         buffer[i] = rand() % 32;
     }
@@ -64,7 +64,7 @@ void unit_test_write_buffer_to_segment_not_in_begin() {
     err = _write(block1 + 2, buffer, 20);
     assert(check_equal(0, err));
 
-    char *readen_buffer = (char *) malloc(sizeof(20));
+    char *readen_buffer = (char *) malloc(sizeof(char) * 20);
     err = _read(block1 + 5, readen_buffer, 15);
     assert(check_equal(0, err));
 
@@ -96,7 +96,7 @@ void unit_test_internal_write() {
     assert(check_equal(0, err));
 
 
-    char *readen_buffer = (char *) malloc(sizeof(buffer_size));
+    char *readen_buffer = (char *) malloc(sizeof(char) * buffer_size);
     err = _read(dest_block, readen_buffer, buffer_size);
     assert(check_equal(0, err));
 
@@ -105,9 +105,45 @@ void unit_test_internal_write() {
 
 }
 
+
+void unit_test_free_function() {
+    ___init(5, 8);
+
+    VA block1;
+
+    VA block2;
+
+    int err = _malloc(&block1, 8);
+    assert(check_equal(0, err));
+
+    err = _malloc(&block2, 16);
+    assert(check_equal(0, err));
+
+    err = _free(block1);
+    assert(check_equal(0, err));
+
+    err = _malloc(&block1, 24);
+    assert(check_equal(0, err));
+
+    char *buffer = generateBuffer(24);
+    size_t buffer_size = 24;
+    err = _write(block1, buffer, buffer_size);
+    assert(check_equal(0, err));
+
+    VA allocated_buffer = (char *) malloc(sizeof(char) * buffer_size);
+    err = _read(block1, allocated_buffer, buffer_size);
+    assert(check_equal(0, err));
+
+    assert(check_equal_collection(buffer, buffer + buffer_size,
+                                  allocated_buffer, allocated_buffer + buffer_size));
+
+}
+
 int main() {
     unit_test_write_buffer_to_one_page();
     unit_test_write_buffer_to_segment_not_in_begin();
     unit_test_internal_write();
-    printf("all corect");
+    unit_test_free_function();
+    printf("all correct");
 }
+

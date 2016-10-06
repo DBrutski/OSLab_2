@@ -2,135 +2,141 @@
 // Created by rizhi-kote on 22.9.16.
 //
 
+#include <stdlib.h>
 #include "memory_dispatcher.h"
-#include "segment.h"
-#include "external_pager.h"
 
+
+
+int lowest_bit_number(int n) {
+    int out;
+    for (out = 0; n; n >>= 1, out++);
+    return out;
+}
+
+void init_pages_offset(size_type page_size) {
+    int casted_page_size = (double) page_size;
+    page_offset_mask = page_size - 1;
+    page_num_first_bit = lowest_bit_number(casted_page_size) - 1;
+}
 
 
 int dispatcher_malloc(memory_dispatcher *self, VA *ptr, size_type segment_size) {
     if (!check_enough_memory(self, segment_size)) { return NOT_ENOUGH_MEMORY_ERROR; }
-    int err = allocate_memory(self, ptr, segment_size);
-    return err;
+    int i = 0;
+    while (self->segments[i] != NULL) i++;
+    self->segments[i] = pager_malloc(self->pager, 0, segment_size);
+
+    memory_address *address = create_memory_address();
+    address->segment_num = i;
+    *ptr = get_virtual_address(address);
+    free(address);
+    return 0;
 }
 
 bool check_enough_memory(memory_dispatcher *self, size_type required_size) {
     return is_memory_enought(self->pager, required_size);
 }
 
-int allocate_memory(memory_dispatcher *self, VA *ptr, size_type segment_size) {
-    segment *free_segment = create_new_segment(self, segment_size);
-    *ptr = (VA) free_segment->segment_begin;
-    return 0;
-}
-
-segment *create_new_segment(memory_dispatcher *self, size_type segment_size) {
-    segment *ptr;
-    if (map_size(self->segments) == 0) {
-        ptr = pager_malloc(self->pager, 0, segment_size);
-    } else {
-        segment *last_segment = map_last(self->segments);
-        ptr = pager_malloc(self->pager, last_segment->segment_end, segment_size);
-    }
-    map_insert(self->segments, ptr->segment_begin, ptr);
-    return ptr;
-}
-
 int dispatcher_write(memory_dispatcher *self, VA block, void *buffer_ptr, size_type buffer_size) {
-    segment *segment_ptr = (segment *) malloc(sizeof(segment_ptr));
-    size_type in_segment_offset;
-    int err = get_segment(self, &segment_ptr, &in_segment_offset, block);
+    memory_address address;
+    int err = get_segment(self, &address, block);
     if (err != 0) {
         return err;
     }
 
-    if (in_segment_offset + buffer_size > segment_ptr->segment_size) {
+    if (is_offset_in_range(self, &address)) {
         return OUT_OF_RANGE_ERROR;
     }
-    if (is_ptr_dispatchers_addres_aria(self, buffer_ptr)) {
+    if (is_ptr_dispatchers_address_aria(buffer_ptr)) {
         char *temp_buffer = (char *) malloc(sizeof(char) * buffer_size);
         err = dispatcher_read(self, buffer_ptr, temp_buffer, buffer_size);
         if (err) {
             return UNKNOWN_ERROR;
         }
-        err = dispatcher_write(self, block, temp_buffer, buffer_size);
-        if (err) {
-            return UNKNOWN_ERROR;
-        }
-    } else {
-        pager_write(self->pager, segment_ptr, in_segment_offset, (char *) buffer_ptr, buffer_size);
+        buffer_ptr = temp_buffer;
     }
+    pager_write(self->pager, self->segments[address.segment_num], &address, (char *) buffer_ptr, buffer_size);
     return SUCCESSFUL_CODE;
 }
 
-bool is_ptr_dispatchers_addres_aria(memory_dispatcher *self, void *ptr) {
-    segment *last_segment = map_last(self->segments);
-    return (size_type )ptr < last_segment->segment_begin + last_segment->segment_end;
-}
-
-int get_segment(memory_dispatcher *self, segment **segment_ptr, size_type *in_segment_offset, VA memory_offset) {
-    size_type offset = (size_type) memory_offset;
-    if (!is_offset_in_range(self, offset)) {
-        return OUT_OF_RANGE_ERROR;
-    };
-    segment *current_segment = find_less_or_equal(self->segments, offset);
-    *segment_ptr = current_segment;
-    *in_segment_offset = offset - current_segment->segment_begin;
-    return SUCCESSFUL_CODE;
-}
-
-bool is_offset_in_range(memory_dispatcher *self, size_type offset) {
-    segment *last_segment = map_last(self->segments);
-    return offset < 0 ||
-           offset >= last_segment->segment_begin + last_segment->pages_amount * self->page_size ? false : true;
+bool is_ptr_dispatchers_address_aria(void *ptr) {
+    return (unsigned long) ptr & internal_memory_bit;
 }
 
 int dispatcher_read(memory_dispatcher *self, VA ptr, void *buffer, size_type buffer_size) {
-    segment *segment;
-    size_type segment_offset;
-    int err = get_segment(self, &segment, &segment_offset, ptr);
+    memory_address address;
+    int err = get_segment(self, &address, ptr);
     if (err != 0) {
         return err;
     }
 
-    if (segment_offset + buffer_size > segment->segment_size) {
+    if (is_offset_in_range(self, &address)) {
         return OUT_OF_RANGE_ERROR;
     }
 
-    err = pager_read(self->pager, segment, segment_offset, (char *) buffer, buffer_size);
+    err = pager_read(self->pager, self->segments[address.segment_num], &address, (char *) buffer, buffer_size);
     return err;
 }
 
 int dispatcher_free(memory_dispatcher *self, VA segment_ptr) {
-    segment *freed_segment;
-    size_type offset;
-    int err = get_segment(self, &freed_segment, &offset, segment_ptr);
+    memory_address address;
+    int err = get_segment(self, &address, segment_ptr);
     if (err) {
         return err;
     }
+    segment *freed_segment = self->segments[address.segment_num];
+    self->segments[address.segment_num] = NULL;
     err = pager_free(self->pager, freed_segment);
     free_segment(freed_segment);
     return err;
 }
 
 memory_dispatcher *create_memory_dispatcher(size_type page_amount, size_type page_size) {
+    int in_memory = page_amount / 2 + page_amount % 2;
+    int external = page_amount / 2;
+
     memory_dispatcher *dispatcher = (memory_dispatcher *) malloc(sizeof(memory_dispatcher));
     dispatcher->page_size = page_size;
-    dispatcher->segments = create_map();
-    dispatcher->pager = create_memory_pager(page_size, page_amount, page_amount);
+    dispatcher->segments = (segment **) malloc(sizeof(segment *) * page_amount);
+    for (int i = 0; i < page_amount; i++) dispatcher->segments[i] = NULL;
+    dispatcher->pager = create_memory_pager(page_size, in_memory, external);
+    init_pages_offset(page_size);
     return dispatcher;
 }
 
 void free_dispatcher(memory_dispatcher *dispatcher) {
-    free_map(dispatcher->segments);
+    free(dispatcher->segments);
     free_pager(dispatcher->pager);
     free(dispatcher);
 }
 
-memory_dispatcher *create_memory_dispatcher_with_paging(size_type page_amount, size_type page_size,
-                                                        size_type pages_amount_in_paging_aria) {
-    memory_dispatcher *dispatcher = create_memory_dispatcher(page_amount, page_size);
-    dispatcher->pager->out_pager = create_external_pager(pages_amount_in_paging_aria, page_size);
-    return dispatcher;
+VA get_virtual_address(memory_address *address) {
+    unsigned long virtual_address = 0;
+    virtual_address |= address->segment_num << segment_first_bit;
+    virtual_address |= address->page_num << page_num_first_bit;
+    virtual_address |= address->page_offset;
+    virtual_address |= internal_memory_bit;
+    return (VA) virtual_address;
+}
+
+memory_address get_memory_address(VA virtual_address) {
+    unsigned long address = (unsigned long) virtual_address;
+    memory_address result;
+    result.segment_num = (address & segment_num_mask) >> segment_first_bit;
+    result.page_num = (address & segment_offset_mask) >> page_num_first_bit;
+    result.page_offset = (address & segment_offset_mask) & page_offset_mask;
+    return result;
+}
+
+bool is_offset_in_range(memory_dispatcher *self, memory_address *address) {
+    if (!self->segments[address->segment_num]) return false;
+    segment *current_segment = self->segments[address->segment_num];
+    return current_segment->segment_size <
+           address->page_num * self->page_size + address->page_offset;
+}
+
+int get_segment(memory_dispatcher *self, memory_address *address, VA memory_offset) {
+    *address = get_memory_address(memory_offset);
+    return is_offset_in_range(self, address);
 }
 
