@@ -5,95 +5,48 @@
 #include "queue.h"
 #include <stdlib.h>
 
-queue *create_queue() {
+queue *create_queue(size_type max_size) {
     queue *out_queue = (queue *) malloc(sizeof(queue));
-    out_queue->last = NULL;
-    out_queue->first = NULL;
+    out_queue->pages = (page **) malloc(sizeof(page *) * max_size);
+    out_queue->last = 0;
+    out_queue->first = 0;
     out_queue->size = 0;
+    out_queue->max_size = max_size;
     return out_queue;
 }
 
 void queue_push(queue *self, page *new_page) {
-    queue_node *node = create_queue_node();
-    node->data = new_page;
-    if (self->last == NULL) {
-        self->last = node;
-        self->first = node;
-    } else {
-        node->next_p = self->last;
-        self->last->previos_p = node;
-        self->last = node;
+    if (self->size != 0) {
+        self->last++;
+        self->last = self->last % self->max_size;
     }
+    self->pages[self->last] = new_page;
     self->size++;
 }
 
 
 void queue_remove(queue *self, page *removing_page) {
-    queue_node *node = self->last;
-    while (node != NULL && (node->data->offset != removing_page->offset ||
-           node->data->is_in_memmory != removing_page->is_in_memmory)) {
-        node = node->next_p;
-    }
-    if (node == NULL) {
-        return;
-    }
-    if (node->data == removing_page) {
-        if (node->previos_p == NULL) {
-            self->last = node->next_p;
-        } else {
-            node->previos_p->next_p = node->next_p;
-        }
-        if (node->next_p == NULL) {
-            self->first = node->previos_p;
-        } else {
-            node->next_p->previos_p = node->previos_p;
-        }
-        self->size--;
-        free(node);
-    }
+    size_type number = 0;
+    while (number < self->size && self->pages[number] != removing_page) number++;
+    if (number == self->size - 1) return;
+    for (; number < self->size; number++)self->pages[number] = self->pages[number + 1];
+    self->size--;
+    self->last--;
 }
 
 page *queue_pop(queue *self) {
-    if (self->first == NULL) {
-        return NULL;
-    }
-    page *out;
-    if (self->size == 1) {
-        out = self->first->data;
-        free(self->first);
-        self->first = NULL;
-        self->last = NULL;
-        self->size--;
-    } else {
-        queue_node *first_node = self->first;
-        self->first = first_node->previos_p;
-        self->first->next_p = NULL;
-        self->size--;
-        out = first_node->data;
-        free(first_node);
-    }
-    return out;
+    if (self->size == 0) return NULL;
+    page *out_page = self->pages[self->first];
+    self->first = ++self->first % self->max_size;
+    self->size--;
+    return out_page;
 }
 
 size_type queue_size(queue *self) {
     return self->size;
 }
 
-queue_node *create_queue_node() {
-    queue_node *node = (queue_node *) malloc(sizeof(queue_node));
-    node->next_p = NULL;
-    node->previos_p = NULL;
-    return node;
-}
-
 void free_queue(queue *queue1) {
-    queue_node *node = queue1->first;
-    if (node != NULL) {
-        while (node->next_p != NULL) {
-            queue_node *node_to_free = node;
-            node = node->next_p;
-            free(node_to_free);
-        }
-    }
+    free(queue1->pages);
     free(queue1);
 }

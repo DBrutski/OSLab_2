@@ -8,6 +8,8 @@
 #include "memory_pager.h"
 #include "external_pager.h"
 
+unsigned int pump_counter = 0;
+
 size_type
 get_page_rest(const memory_pager *self, size_type buffer_size, size_type page_offset, size_type buffer_offset);
 
@@ -21,6 +23,7 @@ void page_pump_up(memory_pager *self, page *pumped_in_page) {
     *pumped_in_page = *pumped_out_page;
     *pumped_out_page = temp_page;
     queue_push(self->pages_to_pump_out, pumped_in_page);
+    pump_counter++;
 }
 
 memory_pager *create_memory_pager(size_type page_size, size_type in_memory_pages_amount, size_type swap_pages_amount) {
@@ -31,12 +34,13 @@ memory_pager *create_memory_pager(size_type page_size, size_type in_memory_pages
     pager->allocated_pages_amount = in_memory_pages_amount + swap_pages_amount;
     pager->free_in_memory_pages = create_inmemory_pages_pull(in_memory_pages_amount, page_size);
     pager->out_pager = create_external_pager(swap_pages_amount, page_size);
-    pager->pages_to_pump_out = create_queue();
+    pager->pages_to_pump_out = create_queue(in_memory_pages_amount);
+    pump_counter = 0;
     return pager;
 }
 
 queue *create_inmemory_pages_pull(size_type pages_amount, size_type page_size) {
-    queue *pull = create_queue();
+    queue *pull = create_queue(pages_amount);
     int i;
     for (i = 0; i < pages_amount; i++) {
         page *new_page = create_page(i * page_size, true);
@@ -176,6 +180,10 @@ int pager_free(memory_pager *self, segment *freed_segment) {
         }
     }
     return 0;
+}
+
+unsigned int counter() {
+    return pump_counter;
 }
 
 

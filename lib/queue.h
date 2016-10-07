@@ -8,20 +8,14 @@
 #include "mmemory.h"
 #include "page.h"
 
-typedef struct queue_node{
-    struct queue_node *next_p;
-    struct queue_node *previos_p;
-    page *data;
-} queue_node;
-
-queue_node * create_queue_node();
-
 typedef struct {
-    queue_node *first, *last;
+    page **pages;
+    size_type first, last;
     size_type size;
+    size_type max_size;
 } queue;
 
-queue * create_queue();
+queue * create_queue(size_type max_size);
 
 void free_queue(queue *);
 

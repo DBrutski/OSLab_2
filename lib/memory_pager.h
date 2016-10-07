@@ -53,4 +53,5 @@ bool is_memory_enought(memory_pager *self, size_type required_size);
 void read_page(memory_pager *self, page *current_page, size_type page_offset, char *buffer,
                size_type buffer_size);
 
+unsigned int counter();
 #endif //NEIRONS_NETWORK_PAGER_H

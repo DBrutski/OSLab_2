@@ -19,7 +19,7 @@ memory_pager *create_external_pager(size_type pages_amount, size_type page_size)
 }
 
 queue *create_external_pages_pull(memory_pager *self, size_type pages_amount, size_type page_size) {
-    queue *pull = create_queue();
+    queue *pull = create_queue(pages_amount);
     int i;
     for (i = 0; i < pages_amount; i++) {
         page *new_page = create_page(i * page_size, true);
