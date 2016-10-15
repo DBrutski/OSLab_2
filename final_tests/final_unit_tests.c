@@ -68,8 +68,8 @@ void unit_test_write_buffer_to_segment_not_in_begin() {
     err = _read(block1 + 5, readen_buffer, 15);
     assert(check_equal(0, err));
 
-    check_equal_collection(buffer + 3, buffer + 3 + 15,
-                           readen_buffer, readen_buffer + 15);
+    assert(check_equal_collection(buffer + 3, buffer + 3 + 15,
+                           readen_buffer, readen_buffer + 15));
 }
 
 

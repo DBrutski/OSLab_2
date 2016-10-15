@@ -54,4 +54,6 @@ void read_page(memory_pager *self, page *current_page, size_type page_offset, ch
                size_type buffer_size);
 
 unsigned int counter();
+
+void page_pump_up(memory_pager *self, page *pumped_in_page);
 #endif //NEIRONS_NETWORK_PAGER_H

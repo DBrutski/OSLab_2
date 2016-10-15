@@ -151,7 +151,7 @@ void number_of_pump_up_page_size() {
     int block_amount = 200;
     size_type block_size = 512;
     VA *blocks = (VA *) malloc(sizeof(VA) * block_amount);
-    for (int page_size = 1; page_size <= 512; page_size <<= 1, point++) {
+    for (int page_size = 8; page_size <= 512; page_size <<= 1, point++) {
         ___init(block_size / page_size * block_amount, page_size);
 
         for (int i = 0; i < block_amount; i++) {
@@ -166,7 +166,7 @@ void number_of_pump_up_page_size() {
             _read(blocks[rand() % block_amount], test_buffer, block_size);
         }
         points[point].x = page_size;
-        points[point].y = (double) counter() / (1000 * block_size / page_size);
+        points[point].y = counter();
     }
 
 
@@ -176,36 +176,79 @@ void number_of_pump_up_page_size() {
 }
 
 void page_fault_overhead() {
-    int amount = 200;
     size_type block_size = 512;
-    VA *blocks = (VA *) malloc(sizeof(VA) * amount);
-    for (int page_size = 1; page_size <= 512; page_size <<= 1) {
-        point *points = (point *) malloc(sizeof(point) * 200);
-        for (int block_amount = amount; block_amount < 400; block_amount += 10) {
-            ___init(block_size / page_size * block_amount, page_size);
+    point *points = (point *) malloc(sizeof(point) * 200);
+    int point_num = 0;
+    for (int page_size = 16; page_size <= 512; page_size <<= 1, point_num++) {
 
-            for (int i = 0; i < amount; i++) {
-                char *test_buffer = (char *) malloc(sizeof(char) * block_size);
-                _malloc(&blocks[i], block_size);
-                _write(blocks[i], test_buffer, block_size);
-                free(test_buffer);
+        ___init(2, page_size);
+
+        memory_address address;
+        VA block;
+        page *pages[2];
+        _malloc(&block, page_size);
+        get_segment(dispatcher, &address, block);
+
+        segment *segment1 = dispatcher->segments[address.segment_num];
+        pages[1] = segment1->pages[0];
+
+        _malloc(&block, page_size);
+        get_segment(dispatcher, &address, block);
+        segment *segment2 = dispatcher->segments[address.segment_num];
+        pages[0] = segment2->pages[0];
+
+        int times = (block_size / page_size) * 10000.;
+        clock_t start = clock();
+        for (int i = 0, block_num = 0; i < times; i++, block_num = (block_num + 1) % 2) {
+            page_pump_up(dispatcher->pager, pages[block_num]);
             }
+        clock_t time = clock() - start;
+        points[point_num].x = page_size;
+        points[point_num].y = time;
 
-            char *test_buffer = (char *) malloc(sizeof(char) * block_size);
-            clock_t start = clock();
-            for (int i = 0; i < 1000; i++) {
-                _read(blocks[rand() % amount], test_buffer, block_size);
-            }
-            clock_t time = clock() - start;
-            points[(block_amount - amount) / 10].x = (double) counter() / (1000 * block_size / page_size);
-            points[(block_amount - amount) / 10].y = time;
-
-            char filename[200];
-            sprintf(filename, "/home/rizhi-kote/Student/rodia/OSLab_2/page_fault_overhead_%i.txt", page_size);
-            write_plot_to_file(filename, points, amount / 10);
-        }
     }
+    char filename[200];
+    sprintf(filename, "/home/rizhi-kote/Student/rodia/OSLab_2/page_fault_overhead.txt");
+    write_plot_to_file(filename, points, point_num);
 }
+
+void fictive_page_work() {
+    size_type block_size = 512;
+    point *points = (point *) malloc(sizeof(point) * 200);
+    int point_num = 0;
+    for (int page_size = 16; page_size <= 512; page_size <<= 1, point_num++) {
+
+        ___init(2, page_size);
+
+        memory_address address;
+        VA block;
+        page *pages[2];
+        _malloc(&block, page_size);
+        get_segment(dispatcher, &address, block);
+
+        segment *segment1 = dispatcher->segments[address.segment_num];
+        pages[1] = segment1->pages[0];
+
+        _malloc(&block, page_size);
+        get_segment(dispatcher, &address, block);
+        segment *segment2 = dispatcher->segments[address.segment_num];
+        pages[0] = segment2->pages[0];
+
+        int times = (block_size / page_size) * 10000.;
+        clock_t start = clock();
+        for (int i = 0, block_num = 0; i < times; i++, block_num = (block_num + 1) % 2) {
+            page_pump_up(dispatcher->pager, pages[block_num]);
+        }
+        clock_t time = clock() - start;
+        points[point_num].x = page_size;
+        points[point_num].y = time;
+
+    }
+    char filename[200];
+    sprintf(filename, "/home/rizhi-kote/Student/rodia/OSLab_2/page_fault_overhead.txt");
+    write_plot_to_file(filename, points, point_num);
+}
+
 
 int main() {
 //    int sizes[] = {32, 64, 128, 256};
@@ -227,6 +270,6 @@ int main() {
 ////                           sizes[block_size]);
 //    }
 
-    page_fault_overhead();
+    time_to_calc_address(200, 256);
     return 0;
 }
