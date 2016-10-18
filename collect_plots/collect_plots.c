@@ -2,11 +2,21 @@
 #include <malloc.h>
 #include <string.h>
 #include <mmemory.c>
+#include <memory_address.h>
+#include <memory_dispatcher.h>
 
 typedef struct {
     double x;
     double y;
 } point;
+
+void calc_average_value();
+
+int getInt(size_type max_block_size, int page_size, int point_amount, point *points, int point_num, VA const *blocks);
+
+void calc_address_simulation(memory_dispatcher *dispatcher, memory_address *ptr, VA block, int size);
+
+int getCalcAddressOverheadToPageSize(point *);
 
 void write_plot_to_file(char *filename, point *plot, int plot_size) {
     FILE *f = fopen(filename, "w");
@@ -249,6 +259,146 @@ void fictive_page_work() {
     write_plot_to_file(filename, points, point_num);
 }
 
+void get_segment_overheat_to_page_size() {
+    int point_amount = 1000;
+
+    point **plots = (point **) malloc(sizeof(point *) * 5);
+    for (int i = 0; i < 5; i++) {
+        point *points = (point *) malloc(sizeof(point) * point_amount);
+        point_amount = getCalcAddressOverheadToPageSize(points);
+        plots[i] = points;
+    }
+
+    point *result = (point *) malloc(sizeof(point) * point_amount);
+    for (int i = 0; i < point_amount; i++) {
+        double sum = 0;
+        for (int j = 0; j < 5; j++) {
+            sum += plots[j][i].y;
+        }
+        result[i].x = plots[0][i].x;
+        result[i].y = sum / 5.;
+    }
+
+    char filename[200];
+    sprintf(filename, "/home/rizhi-kote/Student/rodia/OSLab_2/plots/get_address/get_address_overhead.txt");
+    write_plot_to_file(filename, result, point_amount);
+}
+
+void get_segment_overheat_to_segment_size() {
+    int point_amount = 1000;
+
+    point **plots = (point **) malloc(sizeof(point *) * 5);
+    for (int i = 0; i < 5; i++) {
+        point *points = (point *) malloc(sizeof(point) * point_amount);
+        point_amount = getCalcAddressOverheadToPageSize(points);
+        plots[i] = points;
+    }
+
+    point *result = (point *) malloc(sizeof(point) * point_amount);
+    for (int i = 0; i < point_amount; i++) {
+        double sum = 0;
+        for (int j = 0; j < 5; j++) {
+            sum += plots[j][i].y;
+        }
+        result[i].x = plots[0][i].x;
+        result[i].y = sum / 5.;
+    }
+
+    char filename[200];
+    sprintf(filename, "/home/rizhi-kote/Student/rodia/OSLab_2/plots/get_address/get_address_overhead.txt");
+    write_plot_to_file(filename, result, point_amount);
+}
+
+int getCalcAddressOverheadToPageSize(point *points) {
+    size_type readen_buffer_size = 1000000;
+    size_type page_size = 64;
+    size_type segment_size = 512;
+    int point_num = 0;
+    for (int page_size = 1; page_size <= 512; page_size<<=1, point_num++) {
+        int page_amount = segment_size / page_size + (segment_size % page_size ? 1 : 0);
+        ___init(page_amount * 1, page_size);
+
+        memory_address address;
+        VA block;
+        _malloc(&block, segment_size);
+
+        int times = (readen_buffer_size / segment_size) + (readen_buffer_size % segment_size ? 1 : 0);
+        clock_t start = clock();
+        for (int i = 0, block_num = 0; i < times; i++, block_num = (block_num + 1) % 2) {
+            calc_address_simulation(dispatcher, &address, block, segment_size);
+        }
+        clock_t time = clock() - start;
+        points[point_num].x = page_size;
+        points[point_num].y = time;
+    }
+    return point_num;
+}
+
+int getCalcAddressOverheadToSegmentSize(point *points) {
+    size_type readen_buffer_size = 1000000;
+    size_type page_size = 64;
+    int point_num = 0;
+    for (int segment_size = 100; segment_size <= 1000; segment_size+=30, point_num++) {
+        int page_amount = segment_size / page_size + (segment_size % page_size ? 1 : 0);
+        ___init(page_amount * 1, page_size);
+
+        memory_address address;
+        VA block;
+        _malloc(&block, segment_size);
+
+        int times = (readen_buffer_size / segment_size) + (readen_buffer_size % segment_size ? 1 : 0);
+        clock_t start = clock();
+        for (int i = 0, block_num = 0; i < times; i++, block_num = (block_num + 1) % 2) {
+            calc_address_simulation(dispatcher, &address, block, segment_size);
+        }
+        clock_t time = clock() - start;
+        points[point_num].x = segment_size;
+        points[point_num].y = time;
+    }
+    return point_num;
+}
+
+void calc_address_simulation(memory_dispatcher *dispatcher, memory_address *ptr, VA block, int size) {
+    get_segment(dispatcher, ptr, block);
+
+    size_type first_page_offset = ptr->page_offset;
+
+    size_type page_offset = first_page_offset;
+    size_type buffer_offset = 0;
+
+
+    size_type page_number = ptr->page_num;
+    while (buffer_offset < size) {
+        buffer_offset += (dispatcher->page_size - page_offset);
+        page_offset = 0;
+        page_number++;
+    }
+}
+
+int getInt(size_type max_block_size, int page_size, int point_amount, point *points, int point_num, VA const *blocks) {
+    for (int block_size = 10; block_size <= max_block_size; block_size += 10, point_num++) {
+        int page_amount = block_size / page_size ? block_size / page_size : 1;
+        ___init(page_amount * point_amount, page_size);
+        for (int i = 0; i < point_amount; i++) {
+            _malloc(&blocks[i], block_size);
+        }
+
+        memory_address address;
+        time_t start = clock();
+        for (int i = 0; i < 10000; i++) {
+            get_segment(dispatcher, &address, blocks[rand() % point_amount]);
+        }
+        time_t time = clock() - start;
+        points[point_num].x = block_size;
+        points[point_num].y = time;
+    }
+    return point_num;
+}
+
+void calc_average_value() {
+
+}
+
 
 int main() {
 //    int sizes[] = {32, 64, 128, 256};
@@ -270,6 +420,6 @@ int main() {
 ////                           sizes[block_size]);
 //    }
 
-    time_to_calc_address(200, 256);
+    get_segment_overheat_to_page_size();
     return 0;
 }
