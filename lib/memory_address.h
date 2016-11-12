@@ -10,8 +10,7 @@
 
 typedef struct {
     size_type segment_num;
-    size_type page_num;
-    size_type page_offset;
+    size_type segment_offset;
 } memory_address;
 
 memory_address *create_memory_address();

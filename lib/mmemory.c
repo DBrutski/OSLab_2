@@ -99,7 +99,6 @@ int ___init(int n, size_type szPage) {
     dispatcher->segments = (segment **) malloc(sizeof(segment *) * n);
     for (int i = 0; i < n; i++) dispatcher->segments[i] = NULL;
     dispatcher->pager = create_memory_pager(szPage, in_memory, external);
-    init_pages_offset(szPage);
     if (dispatcher == NULL) { return UNKNOWN_ERROR; }
     return 0;
 }

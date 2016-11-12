@@ -22,6 +22,8 @@ typedef struct memory_pager{
 
 
     size_type page_size;
+    size_type page_num_first_bit;
+    size_type page_offset_mask;
 } memory_pager;
 
 memory_pager *create_memory_pager(size_type page_size, size_type in_memory_pages_amount, size_type swap_pages_amount);
@@ -42,9 +44,6 @@ int pager_free(memory_pager *self, segment *freed_segment);
 
 size_type get_required_pages_amount(memory_pager *self, int required_size);
 
-
-void load_required_pages(memory_pager *self, size_type first_page, size_type required_pages_amount);
-
 void write_page(memory_pager *self, page *current_page, size_type page_offset, char *buffer,
                 size_type buffer_size);
 
@@ -53,7 +52,11 @@ bool is_memory_enought(memory_pager *self, size_type required_size);
 void read_page(memory_pager *self, page *current_page, size_type page_offset, char *buffer,
                size_type buffer_size);
 
+size_type get_physical_memory_address(memory_pager *self, segment *sgm, size_type offset);
+
 unsigned int counter();
+
+void init_pages_offset(memory_pager *self, size_type page_size);
 
 void page_pump_up(memory_pager *self, page *pumped_in_page);
 #endif //NEIRONS_NETWORK_PAGER_H

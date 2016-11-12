@@ -10,9 +10,6 @@
 
 unsigned int pump_counter = 0;
 
-size_type
-get_page_rest(const memory_pager *self, size_type buffer_size, size_type page_offset, size_type buffer_offset);
-
 void page_pump_up(memory_pager *self, page *pumped_in_page) {
     page *pumped_out_page = queue_pop(self->pages_to_pump_out);
     char *temp_buffer = (char *) malloc(sizeof(char) * self->page_size);
@@ -35,6 +32,7 @@ memory_pager *create_memory_pager(size_type page_size, size_type in_memory_pages
     pager->free_in_memory_pages = create_inmemory_pages_pull(in_memory_pages_amount, page_size);
     pager->out_pager = create_external_pager(swap_pages_amount, page_size);
     pager->pages_to_pump_out = create_queue(in_memory_pages_amount);
+    init_pages_offset(pager, pager->page_size);
     pump_counter = 0;
     return pager;
 }
@@ -81,33 +79,18 @@ size_type get_required_pages_amount(memory_pager *self, int required_size) {
 
 int pager_write(memory_pager *self, segment *current_segment, memory_address *address, char *buffer,
                 size_type buffer_size) {
-    size_type first_page = address->page_num;
+    size_type first_address = address->segment_offset;
 
-    size_type first_page_offset = address->page_offset;
-
-    size_type page_offset = first_page_offset;
-    size_type buffer_offset = 0;
-
-
-    size_type page_number = first_page;
-    while (buffer_offset < buffer_size) {
-
-        size_type buffer_size_to_page = get_page_rest(self, buffer_size, page_offset, buffer_offset);
-        page *page = current_segment->pages[page_number];;
-        write_page(self, page, page_offset, buffer + buffer_offset, buffer_size_to_page);
-        buffer_offset += (self->page_size - page_offset);
-        page_offset = 0;
-        page_number++;
+    for (size_type buffer_offset = 0,
+                 segment_offset = first_address; buffer_offset < buffer_size;
+         segment_offset++, buffer_offset++) {
+        self->allocated_memory[get_physical_memory_address(self, current_segment, segment_offset)]
+                = buffer[buffer_offset];
     }
     return 0;
 }
 
-void load_required_pages(memory_pager *self, size_type first_page, size_type required_pages_amount) {
-
-}
-
-void
-write_page(memory_pager *self, page *current_page, size_type page_offset, char *buffer, size_type buffer_size) {
+void write_page(memory_pager *self, page *current_page, size_type page_offset, char *buffer, size_type buffer_size) {
     if (current_page->is_in_memmory == false) {
         page_pump_up(self, current_page);
     }
@@ -123,44 +106,15 @@ bool is_memory_enought(memory_pager *self, size_type required_size) {
 
 int pager_read(memory_pager *self, segment *current_segment, memory_address *address, char *buffer,
                size_type buffer_size) {
-    size_type first_page = address->page_num;
-    size_type require_pages_amount = get_required_pages_amount(self, buffer_size);
+    size_type first_address = address->segment_offset;
 
-    load_required_pages(self, first_page, require_pages_amount);
-
-    size_type first_page_offset = address->page_offset;
-
-    size_type page_offset = first_page_offset;
-    size_type buffer_offset = 0;
-
-
-    size_type page_number = first_page;
-    while (buffer_offset < buffer_size) {
-        size_type readen_page_size = get_page_rest(self, buffer_size, page_offset, buffer_offset);
-
-        page *current_page = current_segment->pages[page_number];
-        read_page(self, current_page, page_offset, buffer + buffer_offset, readen_page_size);
-        buffer_offset += (self->page_size - page_offset);
-        page_offset = 0;
-        page_number++;
+    for (size_type buffer_offset = 0,
+                 segment_offset = first_address; buffer_offset < buffer_size;
+         segment_offset++, buffer_offset++) {
+        buffer[buffer_offset] = self->allocated_memory[get_physical_memory_address(self, current_segment,
+                                                                                   segment_offset)];
     }
     return 0;
-}
-
-size_type
-get_page_rest(const memory_pager *self, size_type buffer_size, size_type page_offset, size_type buffer_offset) {
-    size_type readen_page_size =
-            (buffer_size - buffer_offset) < (self->page_size - page_offset) ? buffer_size - buffer_offset :
-            self->page_size - page_offset;
-    return readen_page_size;
-}
-
-void
-read_page(memory_pager *self, page *current_page, size_type page_offset, char *buffer, size_type buffer_size) {
-    if (current_page->is_in_memmory == false) {
-        page_pump_up(self, current_page);
-    }
-    memcpy(buffer, self->allocated_memory + current_page->offset + page_offset, buffer_size);
 }
 
 void free_pager(memory_pager *pager) {
@@ -186,5 +140,28 @@ unsigned int counter() {
     return pump_counter;
 }
 
+
+
+
+size_type get_physical_memory_address(memory_pager *self, segment *sgm, size_type offset) {
+    page *current_page = sgm->pages[offset >> self->page_num_first_bit];
+    if (current_page->is_in_memmory == false) {
+        page_pump_up(self, current_page);
+    }
+    return current_page->offset | (offset & self->page_offset_mask);
+}
+
+
+int lowest_bit_number(int n) {
+    int out;
+    for (out = 0; n; n >>= 1, out++);
+    return out;
+}
+
+void init_pages_offset(memory_pager *self, size_type page_size) {
+    int casted_page_size = (double) page_size;
+    self->page_offset_mask = page_size - 1;
+    self->page_num_first_bit = lowest_bit_number(casted_page_size) - 1;
+}
 
 

@@ -23,10 +23,6 @@ typedef struct {
     int page_size;
 } memory_dispatcher;
 
-static unsigned long page_offset_mask;
-
-static unsigned long page_num_first_bit;
-
 static const long segment_num_mask = 0xffff00000000;
 
 static const int segment_first_bit = 32;
@@ -58,6 +54,4 @@ bool is_ptr_dispatchers_address_aria(void *ptr);
 memory_address get_memory_address(VA virtual_address);
 
 VA get_virtual_address(memory_address *address);
-
-void init_pages_offset(size_type page_size);
 #endif //NEIRONS_NETWORK_MEMMORY_DISPATCHER_H
